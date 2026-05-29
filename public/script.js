@@ -1,25 +1,38 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. تفعيل الساعة والتزامن القياسي لعام 1926
-    function startSystemClock() {
-        const clockNode = document.getElementById('fed-clock');
+    // تفعيل تزامن ساعة السيرفر الفيدرالي لعام 1926
+    const clockNode = document.getElementById('fed-clock');
+    if(clockNode) {
         setInterval(() => {
-            clockNode.innerText = new Date().toTimeString().split(' ')[0] + " [مزامنة السيرفر الفيدرالي]";
+            clockNode.innerText = new Date().toTimeString().split(' ')[0] + " [مزامنة حية]";
         }, 1000);
     }
-    startSystemClock();
 
-    // 2. قائمة دول وأقاليم العالم الجيوسياسية لعام 1926
+    // إدارة وضبط استجابة الهواتف المحمولة وقائمة البرجر (Drawer Sidebar)
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const fedSidebar = document.getElementById('fed-sidebar-id');
+    const sidebarOverlay = document.getElementById('sidebar-overlay-id');
+
+    if(mobileMenuToggle && fedSidebar && sidebarOverlay) {
+        mobileMenuToggle.addEventListener('click', () => {
+            fedSidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('hidden');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            fedSidebar.classList.remove('open');
+            sidebarOverlay.classList.add('hidden');
+        });
+    }
+
     const COUNTRIES_1926 = [
-        "الجمهورية التركية", "المملكة المصرية (تحت الحماية البريطانية)", "سلطة نجد والحجاز", "الدولة القاجارية (إيران)", 
-        "المملكة العراقية (انتداب بريطاني)", "جمهورية سوريا ولبنان (انتداب فرنسي)", "فلسطين وشرق الأردن (انتداب بريطاني)",
-        "الإمبراطورية اليابانية", "جمهورية الصين", "الاتحاد السوفيتي", "المملكة المتحدة", "الجمهورية الفرنسية", 
-        "مملكة إيطاليا", "جمهورية فايمار (ألمانيا)", "المملكة المغربية (حماية فرنسية وإسبانية)", "تونس (حماية فرنسية)",
-        "الجمهورية الجزائرية (احتلال فرنسي)", "مملكة أفغانستان", "الإمبراطورية الإثيوبية", "جمهورية المكسيك",
-        "جمهورية البرازيل", "جمهورية الأرجنتين", "كندا", "كومنولث أستراليا"
+        "الجمهورية التركية", "المملكة المصرية", "سلطة نجد والحجاز", "الدولة القاجارية (إيران)", 
+        "المملكة العراقية", "جمهورية سوريا ولبنان", "فلسطين وشرق الأردن", "الإمبراطورية اليابانية", 
+        "جمهورية الصين", "الاتحاد السوفيتي", "المملكة المتحدة", "الجمهورية الفرنسية", 
+        "مملكة إيطاليا", "جمهورية فايمار (ألمانيا)", "المملكة المغربية", "تونس", "الجمهورية الجزائرية"
     ];
 
-    const GOV_PASSWORD = "2844306161119281464";
+    const GOV_PASSWORD = "1234"; // قمنا بتسهيلها كما طلبت لمنع أخطاء الرموز الطويلة
     const MARKET_PASSWORD = "5555";
 
     let currentSessionUser = { isLogged: false, role: "guest", country: "الولايات المتحدة", diplomatName: "زائر عابر" };
@@ -40,17 +53,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let authTypeNeeded = null; 
     let activeTriggerButton = null;
 
-    // تهيئة البيانات الأساسية من السيرفر فور تحميل التطبيق
     loadArsenalData();
     loadArchiveFeed();
     loadConsulateChat();
 
-    // نظام التنقل وحماية الأقسام
+    // التنقل وإغلاق القائمة تلقائياً بالهاتف عند نقر أي قطاع
     navButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             const secId = btn.getAttribute('data-sec');
             
+            if (fedSidebar && sidebarOverlay) {
+                fedSidebar.classList.remove('open');
+                sidebarOverlay.classList.add('hidden');
+            }
+
             if (btn.classList.contains('secure-gov')) {
                 if (currentSessionUser.role !== 'president') {
                     triggerGate(secId, 'gov', btn);
@@ -77,19 +94,19 @@ document.addEventListener('DOMContentLoaded', () => {
         gateInput.value = '';
         
         if (type === 'gov') {
-            gateTitle.innerText = "بروتوكول التحقق السيادي الصارم للرئيس";
-            gateDesc.innerText = "يرجى إدخال شفرة التحكم المركزية المكونة من 19 رقماً لفتح ملفات الإدارة الرئاسية والأرشيف.";
+            gateTitle.innerText = "فحص الشفرة السيادية للرئيس";
+            gateDesc.innerText = "يرجى كتابة شفرة التحكم الفيدرالية المعتمدة (1234) للعبور للقطاع.";
         } else {
-            gateTitle.innerText = "شفرة بوابة التجارة الفيدرالية الدولية";
-            gateDesc.innerText = "الوصول لمستودعات بيع السلاح يتطلب الرمز التجاري المصغر (5555).";
+            gateTitle.innerText = "بوابة التجارة ومخازن السلاح الفيدرالية";
+            gateDesc.innerText = "ادخل الرمز التجاري المصغر (5555) لتصفح السوق الدولي.";
         }
         gateModal.classList.remove('hidden');
         gateInput.focus();
     }
 
-    gateClose.addEventListener('click', () => gateModal.add('hidden'));
-    gateConfirm.addEventListener('click', processAuthentication);
-    gateInput.addEventListener('keyup', (e) => { if(e.key === 'Enter') processAuthentication(); });
+    if(gateClose) gateClose.addEventListener('click', () => gateModal.classList.add('hidden'));
+    if(gateConfirm) gateConfirm.addEventListener('click', processAuthentication);
+    if(gateInput) gateInput.addEventListener('keyup', (e) => { if(e.key === 'Enter') processAuthentication(); });
 
     function processAuthentication() {
         const value = gateInput.value.trim();
@@ -99,10 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
             currentSessionUser.country = "الولايات المتحدة الأمريكية (الرئيس)";
             currentSessionUser.diplomatName = "المكتب البيضاوي";
             
-            activeSessionInfo.innerText = "فخامة الرئيس الأمريكي 🇺🇸";
-            activeSessionInfo.style.borderColor = "var(--intel-red)";
-            adminEditorPanel.classList.remove('hidden'); // فك قفل لوحة التحكم بالتعديل والنشر فوراً للرئيس
-            
+            activeSessionInfo.innerText = "فخامة الرئيس الرئاسي 🇺🇸";
+            if(adminEditorPanel) adminEditorPanel.classList.remove('hidden');
             gateModal.classList.add('hidden');
             displaySection(targetSectionId, activeTriggerButton);
         } else if (authTypeNeeded === 'market' && value === MARKET_PASSWORD) {
@@ -121,17 +136,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function displaySection(secId, element) {
         sections.forEach(s => s.classList.add('hidden'));
         navButtons.forEach(b => b.classList.remove('active'));
-        document.getElementById(`${secId}-sec`).classList.remove('hidden');
-        element.classList.add('active');
+        const targetNode = document.getElementById(`${secId}-sec`);
+        if(targetNode) targetNode.classList.remove('hidden');
+        if(element) element.classList.add('active');
     }
 
-    // 3. جلب بيانات الأسلحة من السيرفر وبناء جداول البنتاغون والماركت تزامناً وحياً
+    // جلب وبناء التحديث العسكري من السيرفر
     async function loadArsenalData() {
         try {
             const res = await fetch('/api/arsenal');
             const arsenal = await res.json();
             
-            // تعبئة لوحة القيادة العسكرية للبنتاغون
             const tbody = document.getElementById('pentagon-weapons-table');
             if(tbody) {
                 tbody.innerHTML = '';
@@ -139,15 +154,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     tbody.innerHTML += `<tr>
                         <td class="font-bold text-green">${w.name}</td>
                         <td>${w.type}</td>
-                        <td>${w.speed || w.caliber || '--'}</td>
-                        <td class="font-bold" style="font-size:1.1rem; color:white;">${w.count.toLocaleString()}</td>
+                        <td style="font-size:0.8rem; color:var(--text-gray);">${w.specs}</td>
+                        <td class="font-bold" style="font-size:1rem; color:white;">${w.count.toLocaleString()}</td>
                         <td>${w.location}</td>
                         <td class="text-green">$${w.cost.toLocaleString()}</td>
                     </tr>`;
                 });
             }
 
-            // تعبئة كروت سوق السلاح الفيدرالي الدولي
             const marketGrid = document.getElementById('market-products-grid');
             if(marketGrid) {
                 marketGrid.innerHTML = '';
@@ -156,25 +170,28 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="weapon-market-card">
                             <div>
                                 <h4>${w.name}</h4>
-                                <div class="spec-line"><strong>نوع العتاد:</strong> ${w.type}</div>
-                                <div class="spec-line"><strong>المخزون المتوفر حياً:</strong> <span class="text-green font-bold">${w.count.toLocaleString()} وحدة</span></div>
-                                <div class="spec-line"><strong>الموقع وموقع الشحن:</strong> ${w.location}</div>
+                                <div class="spec-line"><strong>التصنيف:</strong> ${w.type}</div>
+                                <div class="spec-line"><strong>المواصفات:</strong> ${w.specs}</div>
+                                <div class="spec-line"><strong>المخزون المتاح:</strong> <span class="text-green font-bold">${w.count.toLocaleString()} وحدة</span></div>
                             </div>
                             <div>
-                                <div class="weapon-price-tag">قيمة القطعة: $${w.cost.toLocaleString()}</div>
+                                <div class="weapon-price-tag">التكلفة: $${w.cost.toLocaleString()}</div>
                                 <div class="buy-action-wrap">
                                     <input type="number" id="qty-${w.id}" value="1" min="1" max="${w.count}">
-                                    <button class="btn-buy" data-id="${w.id}">شراء فوري وتوريد</button>
+                                    <button class="btn-buy" data-id="${w.id}">تقديم طلب شراء سيادي</button>
                                 </div>
                             </div>
                         </div>`;
                 });
 
-                // تفعيل ميكانيكية الشراء الدولي عبر الـ API للسيرفر
+                document.querySelectorAll('.btn-buy').forEach(btn => {
+                    btn.replaceWith(btn.cloneNode(true)); // تفادي تكرار الأيونت ليسنر عند التحديث الدوري
+                });
+
                 document.querySelectorAll('.btn-buy').forEach(btn => {
                     btn.addEventListener('click', async () => {
                         if(!currentSessionUser.isLogged || currentSessionUser.role === 'guest') {
-                            return alert("بروتوكول حظر: يرجى تسجيل حساب دولتك أولاً عبر الملحقية في قسم القنصليات قبل إبرام الصفقات سيادياً.");
+                            return alert("تنبيه: الرجاء تسجيل اسم السفير واعتماد الحساب أولاً من قسم القنصليات قبل الشراء.");
                         }
                         const id = btn.getAttribute('data-id');
                         const qty = parseInt(document.getElementById(`qty-${id}`).value);
@@ -187,19 +204,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         const result = await response.json();
                         
                         if(result.success) {
-                            alert(`🚨 تـم تـأكـيـد الـصـفـقـة مـن الـسـيـرفـر الـمـركـزي!\nالسلاح: ${result.weaponName}\nالكمية: ${qty} وحدات\nالقيمة الإجمالية: $${result.totalCost.toLocaleString()}\nتم توليد برقية آلية وإرسالها لغرفة الرئيس الدبلوماسية.`);
-                            loadArsenalData(); // تحديث فوري للمخزون أمام الجميع دون تحديث الصفحة
-                            loadConsulateChat(); // تحديث الشات ليرى الجميع برقية الصفقة
+                            alert(`تمت الموافقة المباشرة من وزارة الحرب!\nالعتاد: ${result.weaponName}\nالكمية: ${qty}\nالتكلفة الصافية: $${result.totalCost.toLocaleString()}`);
+                            loadArsenalData();
+                            loadConsulateChat();
                         } else {
                             alert(result.error);
                         }
                     });
                 });
             }
-        } catch (err) { console.error("فشل الاتصال بسيرفر الأسلحة الفيدرالي", err); }
+        } catch (err) { console.error("خطأ ربط أسلحة السيرفر", err); }
     }
 
-    // 4. رفع الملفات والوسائط والمقالات للأرشيف المركزي
+    // معالجات الميديا والأخبار والشات
     const uploadImg = document.getElementById('upload-img');
     const uploadVid = document.getElementById('upload-vid');
     const uploadAudio = document.getElementById('upload-audio');
@@ -217,11 +234,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const previewItem = document.createElement('div');
             previewItem.className = "preview-item";
             if (type === 'image') previewItem.innerHTML = `<img src="${e.target.result}">`;
-            if (type === 'video') previewItem.innerHTML = `<video src="${e.target.result}" controls></video>`;
-            if (type === 'audio') previewItem.innerHTML = `<div class="p-2 bg-dark text-xs text-center" style="color:var(--neon-green)">ملف صوتي جاهز</div>`;
-            
+            if (type === 'video') previewItem.innerHTML = `<video src="${e.target.result}"></video>`;
+            if (type === 'audio') previewItem.innerHTML = `<div class="p-1 text-xs text-center" style="color:var(--neon-green)">صوت مجهز</div>`;
             mediaPreviewContainer.appendChild(previewItem);
-            uploadedMediaPayloads.push({ type: type, data: e.target.result });
+            uploadedMediaPayloads.push({ type, data: e.target.result });
         };
         reader.readAsDataURL(file);
     }
@@ -233,17 +249,17 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadArchiveFeed() {
         const res = await fetch('/api/archive');
         const posts = await res.json();
+        if(!newsFeedContainer) return;
         newsFeedContainer.innerHTML = '';
         posts.forEach((post, index) => {
             newsFeedContainer.innerHTML += `
                 <div class="post-card">
-                    <div class="chat-msg-header"><span>بث موثق في الأرشيف الوطني الأمريكي</span> <span>${post.date}</span></div>
-                    <h3 style="margin-bottom:10px; color:var(--neon-green);">${post.title}</h3>
-                    <p style="font-size:0.92rem; line-height:1.6; color:#e2e8f0;">${post.content}</p>
+                    <div class="chat-msg-header"><span>وثيقة أرشيف فيدرالي رسمية موثقة</span> <span>${post.date}</span></div>
+                    <h3 style="margin-bottom:8px; color:var(--neon-green); font-size:1.05rem;">${post.title}</h3>
+                    <p style="font-size:0.88rem; line-height:1.5; color:#cbd5e1;">${post.content}</p>
                     <div class="post-media-attach" id="media-attach-${index}"></div>
                 </div>`;
             
-            // حقن الملفات الصوتية والمرئية حركياً للمقال
             setTimeout(() => {
                 const box = document.getElementById(`media-attach-${index}`);
                 if(box && post.media) {
@@ -253,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if(m.type === 'audio') box.innerHTML += `<audio src="${m.data}" controls class="preview-audio-node"></audio>`;
                     });
                 }
-            }, 50);
+            }, 30);
         });
     }
 
@@ -261,24 +277,22 @@ document.addEventListener('DOMContentLoaded', () => {
         submitPostBtn.addEventListener('click', async () => {
             const title = postTitleInput.value.trim();
             const content = postContentInput.value.trim();
-            if(!title || !content) return alert("الرجاء تعبئة نص وموضوع الوثيقة أولاً.");
+            if(!title || !content) return alert("الرجاء إدخال نص القرار أو موضوع الوثيقة.");
 
             const res = await fetch('/api/archive', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title, content, media: uploadedMediaPayloads })
             });
-            
             if(res.ok) {
                 postTitleInput.value = ''; postContentInput.value = '';
                 mediaPreviewContainer.innerHTML = ''; uploadedMediaPayloads = [];
                 loadArchiveFeed();
-                alert("تم دفع الأوراق الرسمية وحفظها في قاعدة بيانات السيرفر المركزي.");
+                alert("تم إيداع الوثيقة بنجاح بسيرفر الأرشيف الفيدرالي المركزي.");
             }
         });
     }
 
-    // 5. إدارة الملحقية الدبلوماسية، إنشاء الحسابات والاتصال المباشر بالرئيس
     const countrySelectRegister = document.getElementById('country-select-register');
     const diplomatNameInput = document.getElementById('diplomat-name');
     const registerCountryBtn = document.getElementById('register-country-btn');
@@ -290,7 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatAudio = document.getElementById('chat-audio');
     const chatMediaPreview = document.getElementById('chat-media-preview');
 
-    // ملء دول خارطة العالم 1926 بالدروب داون
     if(countrySelectRegister) {
         COUNTRIES_1926.forEach(c => {
             const opt = document.createElement('option');
@@ -303,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
         registerCountryBtn.addEventListener('click', () => {
             const selectedC = countrySelectRegister.value;
             const dipName = diplomatNameInput.value.trim();
-            if(!dipName) return alert("يرجى كتابة اسم السفير أو المندوب السامي لاعتماد أوراق الدولة السيرفرية.");
+            if(!dipName) return alert("الرجاء تعبئة اسم المندوب السامي لاعتماد الاعتماد الدبلوماسي.");
 
             currentSessionUser.isLogged = true;
             currentSessionUser.role = "diplomat";
@@ -312,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             activeSessionInfo.innerText = `سفير: ${selectedC}`;
             activeSessionInfo.style.borderColor = "var(--market-gold)";
-            alert(`تم تأسيس واعتماد حساب دولة [${selectedC}] بنظام المحاكاة بنجاح.`);
+            alert(`تم تفعيل حساب دولة [${selectedC}] بنجاح ومزامنتها بالسيرفر الفيدرالي.`);
         });
     }
 
@@ -322,9 +335,9 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = function(e) {
             const d = document.createElement('div');
             d.className = "preview-item";
-            d.innerHTML = type === 'image' ? `<img src="${e.target.result}">` : `<div class="p-2 bg-dark text-xs">مرفق ${type} جاهز</div>`;
+            d.innerHTML = type === 'image' ? `<img src="${e.target.result}">` : `<div class="p-1 text-xs">مرفق جاهز</div>`;
             chatMediaPreview.appendChild(d);
-            chatMediaPayloads.push({ type: type, data: e.target.result });
+            chatMediaPayloads.push({ type, data: e.target.result });
         };
         reader.readAsDataURL(file);
     }
@@ -334,34 +347,36 @@ document.addEventListener('DOMContentLoaded', () => {
     if(chatAudio) chatAudio.addEventListener('change', (e) => { if(e.target.files[0]) handleChatFile(e.target.files[0], 'audio'); });
 
     async function loadConsulateChat() {
-        const res = await fetch('/api/diplomacy');
-        const messages = await res.json();
-        consulateChatMessages.innerHTML = '';
-        
-        messages.forEach(msg => {
-            const isPres = msg.presidential;
-            const card = document.createElement('div');
-            card.className = `chat-msg ${isPres ? 'presidential' : ''}`;
-            card.innerHTML = `
-                <div class="chat-msg-header"><span>${msg.sender} (المندوب: ${msg.diplomat})</span> <span>${msg.time}</span></div>
-                <p style="white-space: pre-line; line-height:1.5;">${msg.text}</p>
-                <div class="chat-media-render" id="c-media-${msg.id}"></div>
-            `;
-            consulateChatMessages.appendChild(card);
+        try {
+            const res = await fetch('/api/diplomacy');
+            const messages = await res.json();
+            if(!consulateChatMessages) return;
+            consulateChatMessages.innerHTML = '';
+            
+            messages.forEach(msg => {
+                const isPres = msg.presidential;
+                const card = document.createElement('div');
+                card.className = `chat-msg ${isPres ? 'presidential' : ''}`;
+                card.innerHTML = `
+                    <div class="chat-msg-header"><span>${msg.sender} (المندوب: ${msg.diplomat})</span> <span>${msg.time}</span></div>
+                    <p style="white-space: pre-line; line-height:1.4;">${msg.text}</p>
+                    <div class="chat-media-render" id="c-media-${msg.id}"></div>
+                `;
+                consulateChatMessages.appendChild(card);
 
-            // إرفاق الميديا في الشات حركياً في حال وجودها
-            setTimeout(() => {
-                const box = document.getElementById(`c-media-${msg.id}`);
-                if(box && msg.media) {
-                    msg.media.forEach(m => {
-                        if(m.type === 'image') box.innerHTML += `<img src="${m.data}" style="max-width:100%; max-height:160px; border-radius:4px; margin-top:8px;">`;
-                        if(m.type === 'video') box.innerHTML += `<video src="${m.data}" controls style="max-width:100%; max-height:160px; margin-top:8px;"></video>`;
-                        if(m.type === 'audio') box.innerHTML += `<audio src="${m.data}" controls style="width:100%; margin-top:8px;"></audio>`;
-                    });
-                }
-            }, 50);
-        });
-        consulateChatMessages.scrollTop = consulateChatMessages.scrollHeight;
+                setTimeout(() => {
+                    const box = document.getElementById(`c-media-${msg.id}`);
+                    if(box && msg.media) {
+                        msg.media.forEach(m => {
+                            if(m.type === 'image') box.innerHTML += `<img src="${m.data}" style="max-width:100%; max-height:130px; border-radius:4px; margin-top:6px; display:block;">`;
+                            if(m.type === 'video') box.innerHTML += `<video src="${m.data}" controls style="max-width:100%; max-height:130px; margin-top:6px; display:block;"></video>`;
+                            if(m.type === 'audio') box.innerHTML += `<audio src="${m.data}" controls style="width:100%; margin-top:6px; display:block;"></audio>`;
+                        });
+                    }
+                }, 30);
+            });
+            consulateChatMessages.scrollTop = consulateChatMessages.scrollHeight;
+        } catch(e){}
     }
 
     if(sendChatBtn) {
@@ -373,9 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const payload = {
                 sender: isPres ? "رئيس الولايات المتحدة الأمريكية 🇺🇸" : currentSessionUser.country,
                 diplomat: currentSessionUser.diplomatName,
-                text: text,
-                media: chatMediaPayloads,
-                presidential: isPres
+                text: text, media: chatMediaPayloads, presidential: isPres
             };
 
             const res = await fetch('/api/diplomacy', {
@@ -385,17 +398,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if(res.ok) {
-                chatTextInput.value = '';
-                chatMediaPreview.innerHTML = '';
-                chatMediaPayloads = [];
-                loadConsulateChat(); // إعادة تحميل نافذة الدردرشة حياً لتعكس الجديد
+                chatTextInput.value = ''; chatMediaPreview.innerHTML = ''; chatMediaPayloads = [];
+                loadConsulateChat();
             }
         });
     }
 
-    // تحديث دوري وتلقائي للشات والأسلحة كل 5 ثوانٍ لضمان التزامن الحي بين المستخدمين والرئيس
+    // التحديث التلقائي الدوري الفيدرالي لمزامنة التعديلات حياً بين كل الشاشات والهواتف
     setInterval(() => {
         loadConsulateChat();
         loadArsenalData();
-    }, 5000);
+    }, 4000);
 });
