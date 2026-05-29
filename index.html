@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>النظام الفيدرالي الأمريكي | الأرشيف الحكومي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="seal-icon">USA</div>
+            <div class="sidebar-title">FEDERAL ARCHIVE<br><span>SYSTEM DATABASE</span></div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" data-page="home" class="nav-link active">الرئيسية</a>
+            <a href="#" data-page="military" class="nav-link">الجيش</a>
+            <a href="#" data-page="economy" class="nav-link">الاقتصاد</a>
+            <a href="#" data-page="diplomacy" class="nav-link">الدبلوماسية</a>
+            <a href="#" data-page="industry" class="nav-link">الصناعة</a>
+            <a href="#" data-page="intel" class="nav-link restricted-link">الاستخبارات</a>
+            <a href="#" data-page="navy" class="nav-link">البحرية</a>
+            <a href="#" data-page="airforce" class="nav-link">القوات الجوية</a>
+            <a href="#" data-page="corporations" class="nav-link">الشركات</a>
+            <a href="#" data-page="archive" class="nav-link restricted-link">الأرشيف</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div>السنة المالية 1925</div>
+            <div>المستوى: غير مصنف</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div class="header-left">
+                <div class="agency-badge">النظام الفيدرالي للولايات المتحدة الأمريكية</div>
+                <div class="header-title">الأرشيف الحكومي | قاعدة البيانات الاستراتيجية</div>
+            </div>
+            <div class="header-right">
+                <div class="time-display" id="liveTime"></div>
+                <div class="clearance">تخويل: مدير العمليات</div>
+            </div>
+        </header>
+        <div id="page-content"></div>
+    </main>
+</div>
+
+<div id="accessModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container">
+        <div class="modal-header">تحقق من الصلاحية</div>
+        <div class="modal-body">
+            <p>هذه المعلومات مصنفة سرية. يلزم إدخال كلمة المرور للوصول.</p>
+            <input type="password" id="secretPassword" placeholder="كلمة المرور" autocomplete="off">
+            <div id="passError" class="error-msg"></div>
+        </div>
+        <div class="modal-footer">
+            <button id="cancelPassBtn">إلغاء</button>
+            <button id="confirmPassBtn" class="btn-primary">تأكيد</button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
