@@ -16,7 +16,6 @@ body {
     min-height: 100vh;
 }
 
-/* ========== SIDEBAR ========== */
 .sidebar {
     width: 280px;
     background-color: #0a111f;
@@ -87,8 +86,11 @@ body {
     border-right: 3px solid #b22234;
 }
 
-.restricted-link {
-    opacity: 0.85;
+.news-link {
+    border-top: 1px solid #1e2a3e;
+    margin-top: 10px;
+    padding-top: 12px;
+    color: #ffd966;
 }
 
 .sidebar-footer {
@@ -99,7 +101,6 @@ body {
     margin-top: 1rem;
 }
 
-/* ========== MAIN CONTENT ========== */
 .main-content {
     flex: 1;
     background-color: #0f172a;
@@ -151,7 +152,6 @@ body {
     padding: 2rem;
 }
 
-/* ========== CARDS, TABLES, WIKI ========== */
 .gov-card {
     background-color: #111827;
     border: 1px solid #1f2a3e;
@@ -215,7 +215,6 @@ body {
     color: #bdd4ff;
 }
 
-/* ========== MODAL ========== */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -289,32 +288,14 @@ body {
     margin-top: 0.5rem;
 }
 
-/* ========== ANIMATIONS, RESPONSIVE ========== */
 @keyframes fadeSlide {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 768px) {
-    .app-container {
-        flex-direction: column;
-    }
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-    }
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    .top-header {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
+    .app-container { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: relative; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .top-header { flex-direction: column; gap: 0.5rem; }
 }
