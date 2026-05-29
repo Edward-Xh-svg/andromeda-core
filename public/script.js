@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "مملكة إيطاليا", "جمهورية فايمار (ألمانيا)", "المملكة المغربية", "تونس", "الجمهورية الجزائرية"
     ];
 
-    const GOV_PASSWORD = "1234"; // قمنا بتسهيلها كما طلبت لمنع أخطاء الرموز الطويلة
+    const GOV_PASSWORD = "000000"; // قمنا بتسهيلها كما طلبت لمنع أخطاء الرموز الطويلة
     const MARKET_PASSWORD = "5555";
 
     let currentSessionUser = { isLogged: false, role: "guest", country: "الولايات المتحدة", diplomatName: "زائر عابر" };
