@@ -10,20 +10,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelAuthBtn = document.getElementById('cancel-auth');
     const successToast = document.getElementById('success-toast');
 
-    // الإعدادات الأمنية الصارمة للمحاكاة الفيدرالية
+    // الإعدادات الأمنية الفيدرالية الصارمة للمحاكاة
     const MASTER_KEY = "20083020117";
     let pendingTargetSection = null;
     let pendingTargetItem = null;
-    let isAuthorized = false; // يتم التحقق لمرة واحدة في الجلسة لحماية الأقسام السرية
+    let isAuthorized = false; // تصريح الجلسة الموحد للأقسام المغلقة
 
-    // التبديل وملاحة الصفحات والتحقق الأمني
+    // التبديل وملاحة الصفحات والتحقق الأمني لجميع الفئات ما عدا الأخبار
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const targetId = item.getAttribute('data-target');
             const targetSection = document.getElementById(targetId);
 
-            // التحقق مما إذا كان القسم المطلوب مصنفاً كأرشيف استخباراتي سري
+            // إذا كان القسم يتطلب حماية أمنية (secure-link) ولم يتم التصريح له بعد
             if (item.classList.contains('secure-link') && !isAuthorized) {
                 pendingTargetSection = targetSection;
                 pendingTargetItem = item;
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         targetSection.classList.remove('hidden');
         activeNavItem.classList.add('active');
 
-        // إضافة تأثير أنيميشن خفيف واحترافي في حال فتح أقسام الاستخبارات أو الأرشيف
+        // تأثير تدرج الأنيميشن في الأقسام المؤمنة بعد فتحها بكلمة المرور
         if (targetSection.classList.contains('hidden-secure')) {
             targetSection.classList.add('fade-in-secure');
         }
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         passwordInput.focus();
     }
 
-    // إغلاق بوابة التحقق في حال الإلغاء
+    // إغلاق بوابة التحقق والرجوع التلقائي
     function closeSecurityGate() {
         securityGate.classList.add('hidden');
         pendingTargetSection = null;
@@ -69,21 +69,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // فحص ومعالجة الرمز السري المدخل
     function handleAuthentication() {
         if (passwordInput.value === MASTER_KEY) {
-            isAuthorized = true; // رفع مستوى التصريح الأمني بنجاح
+            isAuthorized = true; // رفع مستوى التصريح الأمني بنجاح للجلسة الحالية
             securityGate.classList.add('hidden');
             
-            // إظهار إشعار التأكيد الإيجابي الاحترافي
+            // إظهار إشعار التأكيد الإيجابي
             successToast.classList.remove('hidden');
             setTimeout(() => {
                 successToast.classList.add('hidden');
             }, 4000);
 
-            // الانتقال الفوري للقسم المكتوم المستهدف
+            // الانتقال الفوري للقسم المستهدف
             if (pendingTargetSection && pendingTargetItem) {
                 switchSection(pendingTargetSection, pendingTargetItem);
             }
         } else {
-            // إظهار رسالة خطأ صريحة ورسمية
+            // إظهار رسالة خطأ
             securityError.style.display = 'block';
             passwordInput.value = '';
             passwordInput.focus();
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitAuthBtn.addEventListener('click', handleAuthentication);
     cancelAuthBtn.addEventListener('click', closeSecurityGate);
 
-    // تفعيل ضغط مفتاح Enter للتحقق بشكل سريع وسلس
+    // تفعيل ضغط مفتاح Enter للتحقق
     passwordInput.addEventListener('keyup', (e) => {
         if (e.key === 'Enter') {
             handleAuthentication();
