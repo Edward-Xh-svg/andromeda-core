@@ -86,13 +86,6 @@ body {
     border-right: 3px solid #b22234;
 }
 
-.news-link {
-    border-top: 1px solid #1e2a3e;
-    margin-top: 10px;
-    padding-top: 12px;
-    color: #ffd966;
-}
-
 .sidebar-footer {
     padding: 1.5rem;
     font-size: 0.7rem;
@@ -291,6 +284,19 @@ body {
 @keyframes fadeSlide {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* رسالة النجاح المؤقتة */
+.success-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #1e3a5f;
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    z-index: 1100;
+    font-size: 0.9rem;
+    animation: fadeSlide 0.2s ease;
 }
 
 @media (max-width: 768px) {
