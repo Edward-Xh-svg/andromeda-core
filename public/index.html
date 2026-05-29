@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>إدارة السيادة الأمريكية والأصول الاستراتيجية | 1926</title>
+    <title>المنصة المركزية - 1926</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="hud-layer"><div class="scanlines"></div></div>
 
     <header class="fed-top-bar">
@@ -21,7 +20,7 @@
             <div class="crypto-clock"><i class="fa-solid fa-tower-broadcast text-green"></i> اتصال مشفر آمن</div>
         </div>
         <div class="bar-left">
-            <div id="active-session-info" class="session-badge">حساب زائر غير معتمد</div>
+            <button id="top-login-btn" class="session-badge" style="cursor:pointer; background-color: var(--intel-red);">تسجيل الدخول للنظام</button>
         </div>
     </header>
 
@@ -29,310 +28,65 @@
         
         <aside id="fed-sidebar-id" class="fed-sidebar">
             <div class="presidential-seal-container">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Seal_of_the_President_of_the_United_States_%20%281916%E2%80%931945%29.svg/512px-Seal_of_the_President_of_the_United_States_%20%281916%E2%80%931945%29.svg.png" alt="Presidential Seal">
-                <h4>المكتب البيضاوي</h4>
-                <small>شبكة الاستخبارات والأصول الكلية</small>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Seal_of_the_President_of_the_United_States_%20%281916%E2%80%931945%29.svg/512px-Seal_of_the_President_of_the_United_States_%20%281916%E2%80%931945%29.svg.png" alt="Seal">
+                <h4>السيرفر المركزي</h4>
             </div>
             
             <nav class="fed-nav">
-                <a href="#" class="nav-btn active" data-sec="news"><i class="fa-solid fa-radio"></i> مركز الأخبار والأرشيف العام</a>
-                <a href="#" class="nav-btn secure-gov" data-sec="whitehouse"><i class="fa-solid fa-landmark-flag"></i> البيت الأبيض والمشاريع</a>
-                <a href="#" class="nav-btn secure-gov" data-sec="pentagon"><i class="fa-solid fa-hexagon"></i> البنتاغون والقواعد الحربية</a>
-                <a href="#" class="nav-btn secure-gov" data-sec="intelligence"><i class="fa-solid fa-user-secret"></i> مجتمعات الاستخبارات المشتركة</a>
-                <a href="#" class="nav-btn secure-gov" data-sec="state-dept"><i class="fa-solid fa-passport"></i> وزارة الخارجية والقوة الناعمة</a>
-                <a href="#" class="nav-btn secure-gov" data-sec="stock"><i class="fa-solid fa-chart-line-up"></i> وول ستريت والشركات المهيمنة</a>
-                <a href="#" class="nav-btn secure-gov" data-sec="ministries"><i class="fa-solid fa-folder-tree"></i> الموارد البشرية والطبيعية واللوجستية</a>
-                <a href="#" class="nav-btn secure-gov" data-sec="consulates"><i class="fa-solid fa-handshake"></i> الملحقية الدبلوماسية وسفراء العالم</a>
-                <a href="#" class="nav-btn secure-market" data-sec="arsenal-market"><i class="fa-solid fa-cart-shopping"></i> مستودعات السلاح للبيع الدولي</a>
+                <a href="#" class="nav-btn active" data-sec="news"><i class="fa-solid fa-radio"></i> مركز الأخبار العام</a>
+                <a href="#" class="nav-btn secure-zone" data-sec="consulates"><i class="fa-solid fa-comments"></i> البرقيات والمراسلات الدبلوماسية</a>
+                <a href="#" class="nav-btn secure-zone" data-sec="arsenal-market"><i class="fa-solid fa-cart-shopping"></i> مستودعات السلاح للبيع الدولي</a>
             </nav>
         </aside>
 
         <div id="sidebar-overlay-id" class="sidebar-mobile-overlay hidden"></div>
 
-        <div id="gatekeeper-modal" class="overlay-gate hidden">
+        <div id="login-modal" class="overlay-gate hidden">
             <div class="gate-box">
-                <div class="lock-icon-pulse"><i class="fa-solid fa-user-shield"></i></div>
-                <h3 id="gate-title">شفرة العبور والتحقق للقطاع</h3>
-                <p id="gate-desc" class="text-muted">مطلوب مطابقة الشفرة للعبور.</p>
-                <input type="password" id="gate-input-pass" placeholder="أدخل كلمة السر هنا">
-                <div id="gate-error" class="error-msg"><i class="fa-solid fa-ban"></i> الرمز غير صحيح.</div>
-                <div class="gate-actions">
-                    <button id="gate-close" class="btn-cancel">إلغاء</button>
-                    <button id="gate-confirm" class="btn-submit">تأكيد العبور</button>
+                <div class="lock-icon-pulse"><i class="fa-solid fa-id-card-clip"></i></div>
+                <h3 id="gate-title">تسجيل الدخول الفيدرالي</h3>
+                <p class="text-muted" style="margin-bottom:15px;">يرجى إدخال الحساب الخاص بدولتك للعبور للسيرفر.</p>
+                <input type="email" id="login-email" placeholder="البريد الإلكتروني (مثال: eric@malines.nc)">
+                <input type="password" id="login-pass" placeholder="كلمة السر الخاصة بك">
+                <div id="login-error" class="error-msg"><i class="fa-solid fa-ban"></i> البيانات خاطئة! تأكد من الإيميل وكلمة السر.</div>
+                <div class="gate-actions" style="margin-top:15px;">
+                    <button id="login-close" class="btn-cancel">إلغاء</button>
+                    <button id="login-confirm" class="btn-submit">دخول السيرفر</button>
                 </div>
             </div>
         </div>
 
         <main class="fed-display-panel">
-
             <section id="news-sec" class="sys-section">
-                <div class="hero-banner">
-                    <h2>غرفة الصحافة والأرشيف الفيدرالي العام - واشنطن</h2>
-                    <p>النافذة الرسمية المفتوحة لاستعراض وإضافة الوثائق والقرارات التنفيذية العامة للاتحاد.</p>
-                </div>
-                
+                <div class="hero-banner"><h2>الأرشيف الفيدرالي العام</h2></div>
                 <div id="admin-editor-panel" class="editor-box hidden">
-                    <h4><i class="fa-solid fa-file-shield"></i> الصلاحيات الرئاسية: نشر وثيقة في الأرشيف الحقيقي</h4>
+                    <h4><i class="fa-solid fa-file-shield"></i> نشر قرار رئاسي</h4>
                     <div class="editor-inputs">
-                        <input type="text" id="post-title" placeholder="عنوان وثيقة القرار الرئاسي">
-                        <textarea id="post-content" placeholder="اكتب نص المراسيم أو الوثائق الفيدرالية الحية..."></textarea>
-                        <div class="media-uploader-grid">
-                            <label class="upload-btn"><i class="fa-solid fa-image"></i> صورة <input type="file" id="upload-img" accept="image/*" class="hidden-input"></label>
-                            <label class="upload-btn"><i class="fa-solid fa-video"></i> فيديو <input type="file" id="upload-vid" accept="video/*" class="hidden-input"></label>
-                            <label class="upload-btn"><i class="fa-solid fa-microphone"></i> صوت <input type="file" id="upload-audio" accept="audio/*" class="hidden-input"></label>
-                        </div>
-                        <div id="media-preview-container" class="preview-wrap"></div>
-                        <button id="submit-post-btn" class="btn-submit w-full">تثبيت ونشر في سيرفر الأرشيف الفيدرالي</button>
+                        <input type="text" id="post-title" placeholder="عنوان القرار">
+                        <textarea id="post-content" placeholder="نص القرار..."></textarea>
+                        <button id="submit-post-btn" class="btn-submit w-full">تثبيت ونشر</button>
                     </div>
                 </div>
-
                 <div id="news-feed-container" class="feed-grid"></div>
             </section>
 
-            <section id="whitehouse-sec" class="sys-section hidden">
-                <div class="classified-title"><h2><i class="fa-solid fa-landmark-flag"></i> الغرفة البيضاوية - المشاريع الاستراتيجية المكتملة (1920-1923)</h2><span>سري للغاية للرئيس</span></div>
-                <p class="section-desc-text">الميزانيات الرأسمالية الموجهة لبناء التفوق التكنولوجي الفيدرالي الاستباقي:</p>
-                <div class="table-scroll-container">
-                    <table class="mil-data-table">
-                        <thead><tr><th>اسم المشروع السيادي</th><th>طبيعة القدرة المكتسبة للمشروع</th><th>التكلفة المالية الإجمالية</th></tr></thead>
-                        <tbody>
-                            <tr><td>Iron Eagle (مقاتلة التفوق الجوي)</td><td>تأمين الهيمنة الجوية المطلقة وسرعات تكتيكية خارقة</td><td class="text-green">$50,000,000</td></tr>
-                            <tr><td>Silent Death (الغواصات الاستراتيجية)</td><td>بناء سلاح أعماق محيطي بمدى عملياتي غير مسبوق</td><td class="text-green">$40,000,000</td></tr>
-                            <tr><td>Voice of God (الراديو العسكري المشفر)</td><td>تأمين قيادة وسيطرة لاسلكية غير قابلة للاعتراض أو الاختراق</td><td class="text-green">$15,000,000</td></tr>
-                            <tr><td>Thunder Road (برنامج الدبابة M1922)</td><td>تطوير سلاح المدرعات الثقيل وتحديث العقيدة القتالية البرية</td><td class="text-green">$80,000,000</td></tr>
-                            <tr><td>Harvest (القاذفات بعيدة المدى)</td><td>القدرة الفورية على قصف العمق الصناعي في ما وراء البحار</td><td class="text-green">$120,000,000</td></tr>
-                            <tr class="font-bold text-red"><td colspan="2">إجمالي الاستثمار الرأسمالي العسكري المكتمل</td><td>$305,000,000</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="pentagon-sec" class="sys-section hidden">
-                <div class="classified-title"><h2><i class="fa-solid fa-hexagon"></i> البنتاغون - أطلس القوات المسلحة ومخازن الأسلحة</h2><span>جاهزية القتال 100%</span></div>
-                
-                <h3 class="sub-section-title"><i class="fa-solid fa-warehouse"></i> جرد المستودعات المركزية وسلاح الأركان:</h3>
-                <div class="table-scroll-container">
-                    <table class="mil-data-table">
-                        <thead><tr><th>الطراز والموديل</th><th>التصنيف التكتيكي</th><th>المواصفات الفنية المعتمدة</th><th>العدد المتاح حياً</th><th>الانتشار والتمركز الرئيسي</th><th>تكلفة القطعة</th></tr></thead>
-                        <tbody id="pentagon-weapons-table"></tbody>
-                    </table>
-                </div>
-
-                <h3 class="sub-section-title" style="margin-top:30px;"><i class="fa-solid fa-map-location-dot"></i> خارطة توزيع الجيوش والقواعد العسكرية الكبرى:</h3>
-                <div class="table-scroll-container">
-                    <table class="mil-data-table">
-                        <thead><tr><th>القاعدة الفيدرالية</th><th>الموقع الجغرافي</th><th>القوى البشرية والعتاد الرئيسي المقيم</th></tr></thead>
-                        <tbody>
-                            <tr><td>فورت براغ</td><td>كارولينا الشمالية</td><td>50,000 جندي، 120 دبابة دعم تكتيكي</td></tr>
-                            <tr><td>فورت هود</td><td>تكساس</td><td>45,000 جندي، 150 دبابة من طراز Thunder الفتاكة</td></tr>
-                            <tr><td>فورت لويس</td><td>واشنطن</td><td>60,000 جندي، 180 دبابة مدرعة</td></tr>
-                            <tr><td>قاعدة كلارك الخارجية</td><td>الفلبين</td><td>30,000 جندي، 100 دبابة، 150 طائرة مقاتلة من طراز Iron Eagle</td></tr>
-                            <tr><td>قاعدة نورفولك البحرية</td><td>فيرجينيا</td><td>4 بوارج حربية مدرعة، 35 مدمرة سريعة، 25 غواصة Silent Death</td></tr>
-                            <tr><td>قاعدة بيرل هاربر الاستراتيجية</td><td>هاواي</td><td>5 بوارج هجومية، 35 مدمرة، 25 غواصة محيطية Silent Death</td></tr>
-                            <tr><td>قاعدة أوماها الجوية</td><td>نبراسكا</td><td>40 قاذفة قنابل استراتيجية من طراز Harvest بعيدة المدى</td></tr>
-                            <tr><td>قاعدة ساكرامنتو الجوية</td><td>كاليفورنيا</td><td>30 قاذفة Harvest، و 200 طائرة مقاتلة Iron Eagle للتفوق الجوي</td></tr>
-                            <tr><td>فورت نوكس المركزي</td><td>كنتاكي</td><td>مدرسة الدبابات المركزية، ومستودع عتاد الاحتياط الضخم لمدرعات Mark VIII</td></tr>
-                            <tr><td>قوات قيادة الاحتلال العسكري</td><td>المكسيك (منذ 1917)</td><td>80,000 جندي فرض سيطرة، 150 دبابة، 80 طائرة مقاتلة لإحباط أي تمرد</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="intelligence-sec" class="sys-section hidden">
-                <div class="classified-title"><h2><i class="fa-solid fa-user-secret"></i> مجتمعات استخبارات الأمن القومي الفيدرالي والاختراق التكنولوجي</h2><span>شفرات غرف الاعتراض</span></div>
-                
-                <div class="intel-grid-layout">
-                    <div class="intel-card">
-                        <h4><i class="fa-solid fa-wallet text-red"></i> ميزانيات وكالات الاستخبارات والأمن لعام 1926</h4>
-                        <ul class="intel-list-styled">
-                            <li><strong>مكتب رئيس الاستخبارات (النواة الأولى للـ CIA):</strong> 15,000,000 دولار سنوياً.</li>
-                            <li><strong>جهاز الاستخبارات العسكرية البرية:</strong> 8,500,000 دولار.</li>
-                            <li><strong>دائرة الاستخبارات البحرية الفيدرالية:</strong> 6,000,000 دولار.</li>
-                            <li><strong>مكتب التحقيقات المركزي (BOI - النواة الحالية للـ FBI):</strong> 3,500,000 دولار.</li>
-                            <li><strong>جهاز الخدمة السرية الفيدرالي وتأمين القيادات:</strong> 1,200,000 دولار.</li>
-                        </ul>
-                    </div>
-
-                    <div class="intel-card">
-                        <h4><i class="fa-solid fa-tower-cell text-green"></i> القدرات التكنولوجية وأنظمة الاتصالات والاعتراض</h4>
-                        <ul class="intel-list-styled">
-                            <li><strong>نظام Voice of God الإذاعي المشفر:</strong> شبكة راديو عسكرية متكاملة لربط القيادات منذ عام 1921 غير قابلة للتشويش تماماً.</li>
-                            <li><strong>تشفير ميكانيكي حركي صارم:</strong> أنظمة تشفير عسكرية يستحيل اختراقها كلياً بالتقنيات والوسائل الحالية لعام 1926.</li>
-                            <li><strong>كاميرات الاستطلاع الاستراتيجي (Eagle Eye):</strong> 300 طائرة عسكرية مجهزة بكاميرات مسح تكتيكي فائقة لرصد خطوط تحرك الخصوم بدقة.</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <section id="state-dept-sec" class="sys-section hidden">
-                <div class="classified-title"><h2><i class="fa-solid fa-passport"></i> السلك الدبلوماسي، النفوذ الخارجي والقوة الناعمة</h2><span>النفوذ الجيوسياسي العالمي</span></div>
-                
-                <div class="intel-card" style="border-right: 4px solid var(--market-gold);">
-                    <h4><i class="fa-solid fa-hand-holding-dollar text-green"></i> السندات والديون السيادية المستحقة لـواشنطن على قوى العالم:</h4>
-                    <p class="text-gray" style="margin-bottom:15px;">تمثل هذه الديون أوراق ضغط دبلوماسية ومالية خانقة للتحكم بالقرارات السيادية الأوروبية:</p>
-                    <div class="table-scroll-container">
-                        <table class="mil-data-table" style="text-align:center;">
-                            <thead><tr><th>الدولة الخاضعة للمديونية</th><th>قيمة المديونية المستحقة لصالح الميزانية الفيدرالية</th></tr></thead>
-                            <tbody>
-                                <tr><td class="font-bold">الإمبراطورية البريطانية العظمى</td><td class="text-green font-bold">$6,000,000,000 (6 مليار دولار)</td></tr>
-                                <tr><td class="font-bold">الجمهورية الفرنسية</td><td class="text-green font-bold">$6,000,000,000 (6 مليار دولار)</td></tr>
-                                <tr><td class="font-bold">جمهورية فايمار (ألمانيا)</td><td class="text-green font-bold">$65,000,000 (65 مليون دولار)</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="intel-card" style="margin-top:20px;">
-                    <h4><i class="fa-solid fa-globe"></i> ملفات التمركز الخارجي والتحالفات الإقليمية:</h4>
-                    <ul class="intel-list-styled">
-                        <li><strong>المناطق الخاضعة للاحتلال المباشر:</strong> دولة المكسيك بالكامل منذ 1917 تحت حراسة 80 ألف جندي لتأمين مصافي النفط للشركات الفيدرالية.</li>
-                        <li><strong>خطوط وقواعد السيطرة الخارجية المفتوحة:</strong> الفلبين، جزر غوام، هاواي، قاعدة غوانتانامو في كوبا، والسيطرة العسكرية التامة على قناة بنما الاستراتيجية المائية.</li>
-                        <li><strong>العقيدة الدبلوماسية والتجارة الدولية:</strong> الهيمنة الكاملة على تصدير القمح والأسلحة والنفط والسيارات إلى أوروبا وآسيا وتوجيه دعم تكتيكي مقيد لفرنسا في أزمة الجزائر لابتزاز نفوذها.</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="stock-sec" class="sys-section hidden">
-                <div class="classified-title"><h2><i class="fa-solid fa-chart-line-up"></i> بورصة وول ستريت والشركات الخمس الكبرى العملاقة المهيمنة</h2><span>الكتلة النقدية الفيدرالية</span></div>
-                
-                <div class="stock-ticker-banner">
-                    <div class="ticker-item text-green">Standard Oil ▲ +4.2%</div>
-                    <div class="ticker-item text-green">U.S. Steel ▲ +2.8%</div>
-                    <div class="ticker-item text-red">Ford Motor ▼ -1.1%</div>
-                    <div class="ticker-item text-green">AT&T ▲ +5.6%</div>
-                    <div class="ticker-item text-green">Bethlehem Steel ▲ +1.9%</div>
-                </div>
-
-                <h3 class="sub-section-title"><i class="fa-solid fa-sack-dollar"></i> مؤشرات الأداء المالي والموازنات الفيدرالية الكبرى:</h3>
-                <div class="stock-market-grid" style="margin-bottom:30px;">
-                    <div class="stock-card"><h4>إجمالي الناتج المحلي الإجمالي</h4><h3>$800,000,000,000</h3><p class="text-green">أقوى اقتصاد على الكوكب</p></div>
-                    <div class="stock-card"><h4>الإيرادات والمدخول السنوي</h4><h3>$95,000,000,000</h3><p>تدفقات نقدية مركزية مستقرة</p></div>
-                    <div class="stock-card"><h4>احتياطي الذهب الفيدرالي في الخزائن</h4><h3>$3,500,000,000</h3><p class="text-green">الغطاء النقدي الصارم للمعاملات</p></div>
-                    <div class="stock-card"><h4>الفائض التجاري وميزان الصادرات السنوي</h4><h3>$2,400,000,000</h3><p class="text-green">مبيعات خارجية خارقة وتفوق صناعي</p></div>
-                    <div class="stock-card"><h4>الديون المترتبة على أمريكا للخارج</h4><h3>$400,000,000</h3><p class="text-red">شبه معدومة مقارنة بحجم النفوذ</p></div>
-                    <div class="stock-card"><h4>فائض الميزانية السنوي الصافي</h4><h3>$400,000,000</h3><p class="text-green">سيولة حرة لدعم المشاريع والابتكار</p></div>
-                </div>
-
-                <h3 class="sub-section-title"><i class="fa-solid fa-building"></i> الكارتيلات والشركات المهيمنة على مفاصل الدولة:</h3>
-                <div class="table-scroll-container">
-                    <table class="mil-data-table">
-                        <thead><tr><th>اسم المؤسسة الاحتكارية العملاقة</th><th>القطاع التجاري والصناعي الحاكم</th><th>الحصة السوقية والنفوذ المالي الجاري</th></tr></thead>
-                        <tbody>
-                            <tr><td class="font-bold">Standard Oil (نيوجيرسي)</td><td>الطاقة والنفط والتكرير</td><td>تسيطر على 35% محلياً و 40% من حقول ومصافي دولة المكسيك المحتلة</td></tr>
-                            <tr><td class="font-bold">U.S. Steel</td><td>صناعة الصلب الهيكلي والتسليح</td><td>45% من مجمل إنتاج الصلب والحديد في القارة بأكملها</td></tr>
-                            <tr><td class="font-bold">Bethlehem Steel</td><td>الصناعات الحربية وبناء البوارج والقطع البحرية</td><td>تستحوذ على 25% من عطاءات التصنيع الثقيل لوزارة الحرب</td></tr>
-                            <tr><td class="font-bold">Ford Motor Company</td><td>السيارات، الشاحنات والجرارات العسكرية</td><td>تسيطر على 50% من تداول وحركة النقل البري في السوق</td></tr>
-                            <tr><td class="font-bold">Curtiss / Boeing Combined</td><td>الطيران والتصنيع الجوي الحربي والاستكشافي</td><td>60% من أجنحة الطيران العسكري والدعم اللوجستي للاتحاد</td></tr>
-                            <tr><td class="font-bold">AT&T</td><td>الاتصالات السلكية والخطوط الفيدرالية والربط</td><td>90% هيمنة مطلقة على كافة خطوط الهاتف والربط الداخلي</td></tr>
-                            <tr><td class="font-bold">J.P. Morgan & Co.</td><td>المصارف والتمويل والتحكم الرأسمالي المعقد</td><td>الهيمنة التاريخية والمطلقة على قروض الحروب وسندات الخزانة</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="ministries-sec" class="sys-section hidden">
-                <div class="classified-title"><h2><i class="fa-solid fa-folder-tree"></i> الموارد الكلية وطاقات الدولة (البشرية، الطبيعية، واللوجستية)</h2><span>جرد أصول الاتحاد العام</span></div>
-                
-                <div class="stock-market-grid" style="margin-bottom:25px;">
-                    <div class="stock-card" style="border-top:3px solid var(--neon-green);">
-                        <h4>إجمالي القوى البشرية في الجيش والاحتياط</h4>
-                        <h2 class="text-green">1,280,000 جندي</h2>
-                        <p class="text-xs text-gray">350 ألف نظامي | 450 ألف حرس وطني | 400 ألف احتياط | 80 ألف بالمكسيك</p>
-                    </div>
-                    <div class="stock-card" style="border-top:3px solid var(--neon-green);">
-                        <h4>عُمال وموظفي الدولة والتصنيع</h4>
-                        <h2 class="text-green">2.4 مليون كادر</h2>
-                        <p class="text-xs text-gray">1.5 مليون بالمصانع الحربية | 600 ألف موظف حكومي | 300 ألف بقطاعات النفط</p>
-                    </div>
-                    <div class="stock-card" style="border-top:3px solid var(--market-gold);">
-                        <h4>شبكة السكك الحديدية الأرضية العسكرية</h4>
-                        <h2 class="text-green">380,000 كم</h2>
-                        <p class="text-xs text-gray">أكبر شبكة نقل بري ولوجستي مترابطة على سطح الأرض</p>
-                    </div>
-                    <div class="stock-card" style="border-top:3px solid var(--market-gold);">
-                        <h4>الموارد الطبيعية ومخازن الطاقة</h4>
-                        <h2 class="text-green">6.75 مليار برميل</h2>
-                        <p class="text-xs text-gray">احتياطي نفط مؤكد يكفي 15 سنة | أكبر مخزون فحم بالعالم يكفي 300 سنة</p>
-                    </div>
-                </div>
-
-                <h3 class="sub-section-title"><i class="fa-solid fa-wheat-awn"></i> الإنتاج الزراعي والغذائي الاستراتيجي السنوي:</h3>
-                <div class="table-scroll-container" style="margin-bottom:25px;">
-                    <table class="mil-data-table">
-                        <thead><tr><th>المحصول أو المنتج الاستراتيجي</th><th>الكمية المنتجة سنوياً وصلاحية التصدير الدولي</th></tr></thead>
-                        <tbody>
-                            <tr><td>القمح الغذائي</td><td>650 مليون بوشل (تأمين الرغيف المحلي والتصدير لأوروبا لابتزاز الأسواق)</td></tr>
-                            <tr><td>الذرة العلفية والصناعية</td><td>2.6 مليار بوشل</td></tr>
-                            <tr><td>اللحوم (معلبة عسكرية وطازجة)</td><td>1.2 مليون طن لتأمين الغذاء لكافة خطوط ومخيمات الجيوش وقواعد السيطرة</td></tr>
-                            <tr><td>القطن طويل وقصير التيلة</td><td>14 مليون بالة (المصدر الأساسي لصناعات النسيج العالمية)</td></tr>
-                            <tr><td>التبغ الفاخر</td><td>1.2 مليار رطل</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="intel-grid-layout">
-                    <div class="intel-card">
-                        <h4><i class="fa-solid fa-truck-ramp-box"></i> القدرات اللوجستية لوزارة النقل والحرب:</h4>
-                        <ul class="intel-list-styled">
-                            <li><strong>الشاحنات العسكرية الفيدرالية المخصصة للمناورات:</strong> 25,000 شاحنة نقل جنود وذخائر.</li>
-                            <li><strong>السيارات العسكرية والدراجات النارية المرافقة للهجمات:</strong> 6,000 سيارة قيادة و 13,000 دراجة نارية هارلي.</li>
-                            <li><strong>جرارات المدفعية الثقيلة والخيول:</strong> 4,000 جرار آلي ميكانيكي مضاف إليها 120,000 من الخيول والبغال للاحتياط الجبلي والميداني الوعر.</li>
-                            <li><strong>الموانئ ومصافي النفط:</strong> أكثر من 200 مصفاة طاقة حية عملاقة مع خمسة موانئ عالمية عملاقة (نيويورك، نورفولك، سان فرانسيسكو، لوس أنجلوس، نيو أورلينز).</li>
-                            <li><strong>مخزون قذائف المدفعية الاستراتيجي الجاهز فوراً:</strong> 3.5 مليون قذيفة مدفعية ثقيلة في مخازن تحت الأرض.</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
             <section id="consulates-sec" class="sys-section hidden">
-                <div class="classified-title"><h2><i class="fa-solid fa-handshake"></i> الملحقية الدبلوماسية - مجلس سفراء دول العالم وعواصم 1926</h2><span>قنوات الربط المباشر مع فخامة الرئيس</span></div>
-                <div class="consulate-layout-grid">
-                    
-                    <div class="diplomatic-form-card">
-                        <h4><i class="fa-solid fa-passport"></i> أوراق تدوين واعتماد حساب دولة جديدة بالنظام الفيدرالي</h4>
-                        <p class="text-muted text-xs" style="margin-bottom:15px;">يمكن لكافة سفراء دول العالم والوفود تسجيل بلدانهم وتأسيس خط مشفر آمن للبدء بطلب مبيعات السلاح وإرسال البرقيات السياسية والخطابات الحية إلى السيرفر المركزي الفيدرالي.</p>
-                        <div class="form-inputs">
-                            <label>اختر الدولة أو الإقليم لعام 1926:</label>
-                            <select id="country-select-register"></select>
-                            <input type="text" id="diplomat-name" placeholder="اسم السفير أو المندوب السامي المفوض بروتوكولياً">
-                            <button id="register-country-btn" class="btn-submit w-full">تأسيس وفتح الخط الدبلوماسي الرسمي بالسيرفر</button>
-                        </div>
+                <div class="classified-title"><h2><i class="fa-solid fa-handshake"></i> المراسلات الدبلوماسية المباشرة</h2></div>
+                <div class="diplomatic-chat-card">
+                    <div id="consulate-chat-messages" class="chat-display-area"></div>
+                    <div class="chat-input-controls">
+                        <textarea id="chat-text-input" placeholder="اكتب برقية مشفرة للسيرفر المشترك..."></textarea>
+                        <button id="send-chat-btn" class="btn-submit w-full">إرسال البرقية فوراً</button>
                     </div>
-
-                    <div class="diplomatic-chat-card">
-                        <h4><i class="fa-solid fa-comments"></i> برقيات ومراسلات الخط الساخن المباشر مع رئيس الولايات المتحدة الأمريكية</h4>
-                        <div id="consulate-chat-messages" class="chat-display-area"></div>
-                        <div class="chat-input-controls">
-                            <textarea id="chat-text-input" placeholder="اكتب برقية دبلوماسية مشفرة موجهة للمكتب البيضاوي عبر السيرفر المشترك..."></textarea>
-                            <div class="media-uploader-grid">
-                                <label class="upload-btn-sm"><i class="fa-solid fa-image"></i> صورة <input type="file" id="chat-img" accept="image/*" class="hidden-input"></label>
-                                <label class="upload-btn-sm"><i class="fa-solid fa-video"></i> فيديو <input type="file" id="chat-vid" accept="video/*" class="hidden-input"></label>
-                                <label class="upload-btn-sm"><i class="fa-solid fa-microphone"></i> صوت <input type="file" id="chat-audio" accept="audio/*" class="hidden-input"></label>
-                            </div>
-                            <div id="chat-media-preview" class="preview-wrap"></div>
-                            <button id="send-chat-btn" class="btn-submit w-full">إرسال البرقية الدبلوماسية فوراً</button>
-                        </div>
-                    </div>
-
                 </div>
             </section>
 
             <section id="arsenal-market-sec" class="sys-section hidden">
-                <div class="classified-title"><h2><i class="fa-solid fa-cart-shopping"></i> مستودعات وبوابات مبيعات السلاح الدولي الفيدرالية المعتمدة</h2><span>تحديث حي للمخزون | التشفير 5555</span></div>
-                <div class="market-intro-box">
-                    <p><strong>بوابة التصدير العسكري المركزي لدول العالم لعام 1926.</strong> يتطلب إتمام أي عملية شراء أن تكون قد سجلت حساب دولتك في قسم القنصليات والملحقية الدبلوماسية مسبقاً. الخصم يتم حياً من السيرفر، وتظهر برقية آلية فورية بالمكتب البيضاوي تخطر فخامة الرئيس بالصفقة وقيمتها الصافية.</p>
-                </div>
+                <div class="classified-title"><h2><i class="fa-solid fa-cart-shopping"></i> مستودعات مبيعات السلاح الدولي</h2></div>
                 <div id="market-products-grid" class="market-grid-layout"></div>
             </section>
-
         </main>
     </div>
-
-    <footer class="fed-footer">
-        <div class="f-right">النظام الفيدرالي المركزي للمحاكاة الفيدرالية وإدارة الأصول الشاملة لعام 1926</div>
-        <div class="f-left hide-mobile"><i class="fa-solid fa-server text-green"></i> السيرفر الحقيقي متصل ومزامن</div>
-    </footer>
-
     <script src="script.js"></script>
 </body>
 </html>
