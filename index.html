@@ -43,10 +43,10 @@
                 </div>
             </div>
             <nav class="sidebar-nav">
-                <!-- القسم الوحيد المفتوح تلقائياً -->
+                <!-- القسم الوحيد المفتوح تلقائياً للمستخدمين للعامة -->
                 <a href="#" class="nav-item active" data-target="news"><i class="fa-solid fa-newspaper"></i> الأخبار والبيانات العامة</a>
                 
-                <!-- جميع الأقسام التالية محمية وبحاجة لكلمة مرور -->
+                <!-- جميع الأقسام التالية محمية تماماً وبحاجة لكلمة مرور -->
                 <a href="#" class="nav-item secure-link" data-target="dashboard"><i class="fa-solid fa-gauge"></i> الرئيسية الفيدرالية <i class="fa-solid fa-lock lock-icon"></i></a>
                 <a href="#" class="nav-item secure-link" data-target="military"><i class="fa-solid fa-person-military-rifle"></i> الجيش والقوات البرية <i class="fa-solid fa-lock lock-icon"></i></a>
                 <a href="#" class="nav-item secure-link" data-target="navy"><i class="fa-solid fa-anchor"></i> القوات البحرية <i class="fa-solid fa-lock lock-icon"></i></a>
@@ -62,7 +62,7 @@
             </div>
         </aside>
 
-        <!-- Content المحتوى الرئيسي -->
+        <!-- Content المحتوى الرئيسي والمشفر للشبكة -->
         <main class="gov-content">
 
             <!-- نظام الحماية (جدار الحماية والتحقق من كلمة المرور) -->
@@ -85,7 +85,7 @@
 
             <!-- بوابات النجاح والتنبيه الإيجابي -->
             <div id="success-toast" class="success-toast hidden">
-                <i class="fa-solid fa-circle-check"></i> تم التحقق من صلاحية الوصول. يتم فك تشفير البيانات...
+                <i class="fa-solid fa-circle-check"></i> تم التحقق من صلاحية الوصول. يتم فك تشفير البيانات الاستراتيجية...
             </div>
 
             <!-- ================= SECTION: NEWS (الأخبار المفتوحة للعامة) ================= -->
@@ -108,16 +108,74 @@
                 
                 <div class="wiki-block" style="border-top: 3px solid var(--color-accent-red);">
                     <h3>إشعار أمني إداري</h3>
-                    <p>إذا كنت تمتلك مصلحة رسمية مصرحة للاطلاع على إحصائيات الجيش، البحرية، الجوية، موازنات الاقتصاد، أو أرقام شركة <strong>Standard Oil</strong>، يرجى اختيار القسم المطلوب من القائمة الجانبية وإدخال رمز الوصول الحكومي المكون من 11 رقماً والممنوح لك من القيادة المشتركة.</p>
+                    <p>إذا كنت تمتلك مصلحة رسمية مصرحة للاطلاع على إحصائيات الجيش، الرادارات الحية، البحرية، الجوية، موازنات الاقتصاد، أو أرقام شركة <strong>Standard Oil</strong>، يرجى اختيار القسم المطلوب من القائمة الجانبية وإدخل رمز الوصول الحكومي المكون من 11 رقماً والممنوح لك من القيادة المشتركة.</p>
                 </div>
             </section>
 
-            <!-- ================= SECTION: DASHBOARD (SECURE) ================= -->
+            <!-- ================= SECTION: DASHBOARD (SECURE & CONTAINS RADAR) ================= -->
             <section id="dashboard" class="content-section hidden-secure hidden">
                 <div class="section-title">
-                    <h2>لوحة القيادة والتقارير العامة للاتحاد (مؤمن)</h2>
+                    <h2>نظام الرصد المركزي والتحركات الاستراتيجية الحية | 1925</h2>
                 </div>
-                <div class="stats-grid">
+
+                <div class="gov-alert">
+                    <i class="fa-solid fa-circle-nodes"></i> <strong>نظام التتبع التكتيكي الفيدرالي:</strong> انقر فوق أي أيقونة متحركة داخل الرادار لعرض وثيقة الحركية، التسليح، الطاقم، والوقت المتبقي للوصول إلى الوجهة المحددة.
+                </div>
+
+                <!-- واجهة الرادار واللوحة الجانبية بأسلوب رادارات التعقب الكلاسيكية الحية -->
+                <div class="radar-interface">
+                    <!-- لوحة عرض تفاصيل القطعة المحددة -->
+                    <div id="radar-details-panel" class="radar-panel">
+                        <div class="panel-placeholder" id="panel-empty-state">
+                            <i class="fa-solid fa-satellite-dish"></i>
+                            <p>برج المراقبة: حدد قطعة عسكرية من الرادار لبدء اعتراض البيانات وفك التشفير التكتيكي.</p>
+                        </div>
+                        <div class="panel-content hidden" id="panel-real-content">
+                            <div class="panel-header-unit">
+                                <h4 id="unit-name">--</h4>
+                                <span class="badge-status" id="unit-type">--</span>
+                            </div>
+                            
+                            <!-- صور القطع العسكرية المسترجعة تاريخياً لعام 1925 -->
+                            <div class="unit-image-container">
+                                <img id="unit-img-ship" class="hidden" src="https://images.unsplash.com/photo-1507682531662-421b17a471c1?q=80&w=400&auto=format&fit=crop" alt="سفينة حربية أمريكية 1925">
+                                <img id="unit-img-plane" class="hidden" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=400&auto=format&fit=crop" alt="طائرة حربية أمريكية 1925">
+                            </div>
+
+                            <table class="panel-table">
+                                <tr>
+                                    <td><i class="fa-solid fa-users"></i> <strong>حجم الطاقم:</strong></td>
+                                    <td id="unit-crew">--</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa-solid fa-gun"></i> <strong>التسليح القياسي:</strong></td>
+                                    <td id="unit-weapons" class="text-red">--</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa-solid fa-compass"></i> <strong>المسار الحالي:</strong></td>
+                                    <td id="unit-route">--</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa-solid fa-gauge-high"></i> <strong>السرعة التكتيكية:</strong></td>
+                                    <td id="unit-speed">--</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fa-solid fa-clock"></i> <strong>الوقت المتبقي:</strong></td>
+                                    <td id="unit-eta" class="font-bold text-blue">--</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- شاشة الخريطة والرادار الفعلي -->
+                    <div class="radar-map-wrapper">
+                        <canvas id="radarCanvas"></canvas>
+                        <div class="radar-overlay-grid"></div>
+                    </div>
+                </div>
+
+                <!-- البطاقات الإحصائية السيادية الأصلية أسفل الرادار -->
+                <div class="stats-grid" style="margin-top: 30px;">
                     <div class="stat-card">
                         <div class="stat-icon bg-blue"><i class="fa-solid fa-dollar-sign"></i></div>
                         <div class="stat-data">
@@ -131,53 +189,9 @@
                         <div class="stat-data">
                             <h3>الدخل السنوي للخزينة</h3>
                             <div class="stat-value">95 مليار دولار</div>
-                            <span class="stat-meta">معدل الفوائض والضرائب السيادية</span>
+                            <span class="stat-meta">معدل الضرائب السيادية</span>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon bg-red"><i class="fa-solid fa-person-military-to-person"></i></div>
-                        <div class="stat-data">
-                            <h3>إجمالي الجنود تحت الخدمة</h3>
-                            <div class="stat-value">1,280,000 جندي</div>
-                            <span class="stat-meta">القوات البرية والبحرية والجوية</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon bg-dark"><i class="fa-solid fa-oil-well"></i></div>
-                        <div class="stat-data">
-                            <h3>احتياطي النفط الاستراتيجي</h3>
-                            <div class="stat-value">6.75 مليار برميل</div>
-                            <span class="stat-meta">الشركة المهيمنة: Standard Oil</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="table-wrapper">
-                    <div class="table-title">المؤشرات السيادية الأساسية المقارنة</div>
-                    <table class="gov-table">
-                        <thead>
-                            <tr>
-                                <th>المؤشر الفيدرالي</th>
-                                <th>القيمة والقيمة الدفترية</th>
-                                <th>الجهة المسؤولة عن التوثيق</th>
-                                <th>تحديث الضمان</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>احتياطي الذهب الفيدرالي</strong></td>
-                                <td class="text-blue font-bold">3.5 مليار دولار</td>
-                                <td>الخزانة الأمريكية ومستودعات فورت نوكس</td>
-                                <td>مؤرشف في 1925</td>
-                            </tr>
-                            <tr>
-                                <td><strong>سعر صرف العملة الرسمية</strong></td>
-                                <td>1 USD = 2.6 JPY (الين الياباني)</td>
-                                <td>بنك التسويات الدولية والمقاصة</td>
-                                <td>مؤرشف في 1925</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </section>
 
@@ -211,7 +225,7 @@
                 </div>
 
                 <div class="table-wrapper">
-                    <div class="table-title">ترسانة الجيش والقوات البرية (تحديث 1925)</div>
+                    <div class="table-title">ترسانة الجيش والقوات البرية والمعدات (تحديث 1925)</div>
                     <table class="gov-table">
                         <thead>
                             <tr>
@@ -269,7 +283,7 @@
                     <div class="stat-card">
                         <div class="stat-icon bg-blue"><i class="fa-solid fa-water"></i></div>
                         <div class="stat-data">
-                            <h3>الأساطيل والغواصات</h3>
+                            <h3>الأساطيل وغواصات الأعماق</h3>
                             <div class="stat-value">100 غواصة</div>
                         </div>
                     </div>
@@ -325,8 +339,8 @@
                         <tbody>
                             <tr>
                                 <td><strong>Standard Oil NJ (نيو جيرسي)</strong></td>
-                                <td class="text-red font-bold">تكرير واستخراج النفط والطاقة</td>
-                                <td>توفير احتياطي قدره 6.75 مليار برميل نفط</td>
+                                <td class="text-red font-bold">تكرير واستخراج النفط والطاقة واحتكارات الوقود</td>
+                                <td>توفير احتياطي سيادي قدره 6.75 مليار برميل نفط للاتحاد</td>
                             </tr>
                         </tbody>
                     </table>
@@ -339,7 +353,7 @@
                     <h2>الشؤون الدبلوماسية والعلاقات الدولية (مؤمن)</h2>
                 </div>
                 <div class="wiki-block">
-                    <p>تتمحور العقيدة الدبلوماسية للاتحاد حول الحفاظ على السيادة والمصالح القومية العليا لعام 1925 وحماية الخطوط الاستراتيجية وحماية حلفاء التبادل النفعي.</p>
+                    <p>تتمحور العقيدة الدبلوماسية للاتحاد حول الحفاظ على السيادة والمصالح القومية العليا لعام 1925 وحماية خطوط الملاحة وحلفاء التبادل التجاري.</p>
                 </div>
             </section>
 
@@ -349,17 +363,17 @@
                     <h2 class="text-red"><i class="fa-solid fa-eye-slash"></i> قاعدة بيانات الاستخبارات السرية الفيدرالية</h2>
                 </div>
                 <div class="gov-alert alert-danger">
-                    <i class="fa-solid fa-shield-halved"></i> <strong>تحذير داخلي:</strong> ملف استخباراتي مصنف للمستويات القيادية العليا فقط لعام 1925.
+                    <i class="fa-solid fa-shield-halved"></i> <strong>تحذير داخلي:</strong> ملف استخباراتي استراتيجي مصنف للمستويات القيادية العليا فقط لعام 1925 للقيادة المشتركة.
                 </div>
             </section>
 
             <!-- ================= SECTION: ARCHIVE (SECURE) ================= -->
             <section id="archive" class="content-section hidden-secure hidden">
                 <div class="section-title">
-                    <h2 class="text-red"><i class="fa-solid fa-box-archive"></i> الأرشيف السري والملفات المكتومة لعام 1925</h2>
+                    <h2>الأرشيف السري والملفات المكتومة لعام 1925</h2>
                 </div>
                 <div class="gov-alert alert-danger">
-                    <i class="fa-solid fa-folder-open"></i> <strong>ملفات الأرشيف الفيدرالي المغلق:</strong> تم تأكيد صلاحية عميل الفئة أ بنجاح.
+                    <i class="fa-solid fa-folder-open"></i> <strong>ملفات الأرشيف الفيدرالي المغلق:</strong> تم تأكيد صلاحية عميل الفئة أ بنجاح كامل لجلسة اليوم.
                 </div>
             </section>
 
