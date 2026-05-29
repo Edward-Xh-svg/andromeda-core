@@ -1,7 +1,7 @@
 {
   "name": "us-gov-simulation-1926",
-  "version": "1.1.0",
-  "description": "المنصة المركزية لإدارة السيادة الأمريكية والتواصل الدولي لعام 1926",
+  "version": "1.2.0",
+  "description": "المنصة المركزية الشاملة لإدارة السيادة الأمريكية والأصول الاستراتيجية لعام 1926",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
