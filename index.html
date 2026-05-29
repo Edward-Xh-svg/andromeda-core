@@ -2,385 +2,274 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>النظام الفيدرالي الأمريكي – شبكة الاستخبارات الاستراتيجية | 1925</title>
-    <!-- خطوط الأنظمة الحكومية الرسمية -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
+    <title>منصة المراقبة الفيدرالية | 1925 | نظام أرشيف الأمن القومي</title>
+    
+    <!-- الخطوط -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- أيقونات الواجهة العسكرية -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- مكتبة الخرائط Leaflet -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- أيقونات Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Leaflet CSS للخريطة -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="style.css">
+    
+    <!-- ملف الأنماط -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-    <!-- خلفية البيانات المتحركة التكتيكية HUD -->
-    <div class="hud-bg-effects">
+    <!-- طبقة الخلفية الديناميكية -->
+    <div id="background-layer">
+        <canvas id="hud-canvas"></canvas>
         <div class="scanlines"></div>
-        <div class="radar-pulse-ambient"></div>
+        <div class="noise-overlay"></div>
+        <div class="radar-overlay"></div>
+        <video autoplay muted loop playsinline class="bg-video">
+            <source src="assets/videos/intel-bg.mp4" type="video/mp4">
+            <!-- فيديو احتياطي: ضباب كثيف أو مركز قيادة -->
+        </video>
     </div>
 
-    <!-- الشريط العلوي الفيدرالي القيادي -->
-    <header class="fed-header">
-        <div class="header-right">
-            <button id="sidebar-toggle"><i class="fa-solid fa-bars"></i></button>
-            <div class="search-bar-container">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="البحث في الأرشيف الفيدرالي..." disabled>
+    <!-- شاشة التحميل -->
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="eagle-seal"><i class="fas fa-shield-haltered"></i></div>
+            <h2>جارٍ تهيئة قنوات الاتصال الآمنة...</h2>
+            <div class="progress-bar"><span></span></div>
+            <p class="loading-desc">المستوى: TS // SCI // 1925</p>
+        </div>
+    </div>
+
+    <!-- نافذة المصادقة المنبثقة -->
+    <div id="auth-overlay" class="modal-overlay">
+        <div class="auth-modal glass-panel">
+            <div class="auth-header">
+                <i class="fas fa-lock"></i>
+                <h3>نظام التحقق من الصلاحية الأمنية</h3>
+                <p>الوصول إلى مواد مصنفة تحت مستوى "سري للغاية"</p>
+            </div>
+            <div class="auth-body">
+                <div class="terminal-effect">
+                    <span class="prompt">> USER:</span> GUEST_ANONYMOUS<br>
+                    <span class="prompt">> REQ:</span> ACCESS_CLASSIFIED_NODE<br>
+                    <span class="prompt">> STATUS:</span> <span class="blinking">PENDING IDENT...</span>
+                </div>
+                <div class="input-group">
+                    <label for="auth-code">رمز الدخول السري</label>
+                    <input type="password" id="auth-code" placeholder="أدخل رمز الوصول" inputmode="numeric">
+                    <button id="auth-submit" class="btn-primary">مصادقة</button>
+                </div>
+                <p id="auth-error" class="error-msg"></p>
             </div>
         </div>
-        <div class="header-center">
-            <span class="system-status-indicator"><span class="pulse-dot"></span> النظام : متصل</span>
-            <span class="system-time" id="live-clock">22:47:36</span>
-        </div>
-        <div class="header-left">
-            <div class="header-icon-badge"><i class="fa-solid fa-envelope"></i><span class="badge-num bg-red">5</span></div>
-            <div class="header-icon-badge"><i class="fa-solid fa-bell"></i><span class="badge-num bg-red">12</span></div>
-            <div class="header-icon-badge"><i class="fa-solid fa-globe"></i></div>
-            <div class="user-profile-badge"><i class="fa-solid fa-circle-user"></i></div>
-        </div>
-    </header>
+    </div>
 
-    <div class="app-layout">
-        
-        <!-- القائمة الجانبية الكاملة بجميع الأقسام الـ 23 المطلوبة -->
-        <aside class="fed-sidebar">
-            <div class="sidebar-top-seal">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Great_Seal_of_the_United_States_%20%28obverse%29.svg/512px-Great_Seal_of_the_United_States_%20%28obverse%29.svg.png" alt="Seal">
-                <h3>UNITED STATES</h3>
-                <p>FEDERAL ARCHIVE</p>
-            </div>
-            
-            <nav class="sidebar-navigation">
-                <a href="#" class="nav-link" data-target="news"><i class="fa-solid fa-newspaper"></i> الأخبار والبيانات العامة <span class="badge-free">مفتوح</span></a>
-                <a href="#" class="nav-link secure-link" data-target="dashboard"><i class="fa-solid fa-chart-pie"></i> لوحة القيادة الفيدرالية <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="cmd-center"><i class="fa-solid fa-earth-americas"></i> مركز القيادة (الرادار الحي) <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="fed-gov"><i class="fa-solid fa-building-flag"></i> القيادة الفيدرالية <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="war-dept"><i class="fa-solid fa-shield-halved"></i> وزارة الحرب <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="treasury-dept"><i class="fa-solid fa-vault"></i> وزارة الخزانة <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="intelligence"><i class="fa-solid fa-eye-slash"></i> الاستخبارات السرية <span class="badge-secure">سري</span></a>
-                <a href="#" class="nav-link secure-link" data-target="national-security"><i class="fa-solid fa-mask"></i> الأمن القومي <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="army"><i class="fa-solid fa-person-military-rifle"></i> القوات البرية <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="airforce"><i class="fa-solid fa-plane-up"></i> القوات الجوية <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="navy"><i class="fa-solid fa-anchor"></i> القوات البحرية <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="economy"><i class="fa-solid fa-chart-line"></i> الاقتصاد الوطني <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="companies"><i class="fa-solid fa-industry"></i> الشركات الاحتكارية <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="states"><i class="fa-solid fa-map-location-dot"></i> الولايات والاتحاد <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="foreign-ops"><i class="fa-solid fa-jet-fighter-up"></i> العمليات الخارجية <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="military-ind"><i class="fa-solid fa-gun"></i> الصناعات العسكرية <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="archive"><i class="fa-solid fa-box-archive"></i> الأرشيف السري <span class="badge-secure">سري</span></a>
-                <a href="#" class="nav-link secure-link" data-target="classified-reports"><i class="fa-solid fa-file-contract"></i> التقارير السرية <span class="badge-secure">سري</span></a>
-                <a href="#" class="nav-link secure-link" data-target="comm-network"><i class="fa-solid fa-tower-cell"></i> شبكة الاتصالات <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="surveillance"><i class="fa-solid fa-video"></i> أنظمة المراقبة <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="military-labs"><i class="fa-solid fa-flask"></i> المختبرات العسكرية <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="profiles"><i class="fa-solid fa-id-card"></i> ملفات الشخصيات <i class="fa-solid fa-lock"></i></a>
-                <a href="#" class="nav-link secure-link" data-target="ns-council"><i class="fa-solid fa-users-rectangle"></i> مجلس الأمن القومي <i class="fa-solid fa-lock"></i></a>
-            </nav>
-
-            <div class="sidebar-status-box">
-                <div class="defcon-bar">حالة الاستعداد الاستراتيجي: <span class="text-green font-bold">DEFCON 5</span></div>
-                <div class="system-security-badge">نظام محمي بتشفير عسكري</div>
-            </div>
-        </aside>
-
-        <!-- منطقة العرض الرئيسية للأقسام والمحتويات -->
-        <main class="fed-main-content">
-
-            <!-- بوابة الفحص والتحقق الأمني المنبثقة للأقسام المشفرة -->
-            <div id="security-gate-overlay" class="security-overlay hidden">
-                <div class="security-card">
-                    <div class="padlock-animation">
-                        <i class="fa-solid fa-lock-open system-lock-icon"></i>
-                    </div>
-                    <h2>نظام فحص الهوية الصارم الفئة (أ)</h2>
-                    <p class="warning-text">أنت تحاول الدخول إلى ملفات خاضعة لقانون السرية الفيدرالية لعام 1925. يرجى إدخال شفرة فك التشفير المركزية المكونة من 11 رقماً.</p>
-                    
-                    <div class="security-input-wrapper">
-                        <input type="password" id="fed-pass-input" placeholder="أدخل رمز المرور الموحد للمكتب">
-                        <div id="security-error-msg" class="err-message"><i class="fa-solid fa-triangle-exclamation"></i> شفرة التحقق خاطئة، تم توجيه البلاغ لمكتب الأمن الداخلي.</div>
-                    </div>
-
-                    <div class="security-btn-actions">
-                        <button id="cancel-gate-btn" class="btn btn-muted">إلغاء الأمر</button>
-                        <button id="submit-gate-btn" class="btn btn-danger">تأكيد ومطابقة البيانات</button>
+    <!-- الحاوية الرئيسية -->
+    <div id="app-container">
+        <!-- رأس الصفحة الاحترافي -->
+        <header id="main-header">
+            <div class="header-left">
+                <button id="menu-toggle" class="icon-btn" aria-label="فتح القائمة">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="seal-area">
+                    <i class="fas fa-eagle header-eagle"></i>
+                    <div class="dept-title">
+                        <h1>مكتب الاستخبارات المركزية</h1>
+                        <span class="sub-dept">قسم الأرشيف والمراقبة | 1925</span>
                     </div>
                 </div>
             </div>
-
-            <!-- إشعار نجاح فك التشفير التلقائي -->
-            <div id="auth-success-toast" class="toast-success hidden">
-                <i class="fa-solid fa-circle-check"></i> تم فك تشفير مصفوفة البيانات بنجاح. مرحباً بك أيها العميل.
+            <div class="header-center">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="البحث في قاعدة بيانات الأمن القومي...">
+                </div>
             </div>
+            <div class="header-right">
+                <div class="live-clock">
+                    <span id="current-date">04 سبتمبر 1925</span>
+                    <span id="current-time">--:--:--</span>
+                </div>
+                <div class="system-status">
+                    <span class="status-dot online"></span>
+                    <span>SYSTEM SECURE</span>
+                </div>
+                <div class="alert-badge">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge-count">3</span>
+                </div>
+            </div>
+        </header>
 
-            <!-- ================= القسم 23: الأخبار (الافتراضي والمفتوح تلقائياً) ================= -->
-            <section id="news" class="content-section">
-                <div class="fed-row-banner">
-                    <div class="banner-text">
-                        <h2>بوابة النشر والإعلام العامة الفيدرالية | 1925</h2>
-                        <p>هذا القسم غير مشفر ومتاح لجميع الرتب وموظفي الملحقيات والعموم لمتابعة أوراق الاتحاد العامة.</p>
+        <!-- القائمة الجانبية (Drawer في الهاتف) -->
+        <nav id="sidebar" class="main-sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-shield-virus"></i>
+                <h2>لوحة التحكم</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-section="home"><i class="fas fa-newspaper"></i> الأخبار العاجلة</li>
+                <li class="nav-item" data-section="command"><i class="fas fa-star"></i> مركز القيادة</li>
+                <li class="nav-item" data-section="war"><i class="fas fa-land-mine-on"></i> وزارة الحرب</li>
+                <li class="nav-item" data-section="intel"><i class="fas fa-user-secret"></i> الاستخبارات</li>
+                <li class="nav-item" data-section="security"><i class="fas fa-shield-haltered"></i> الأمن القومي</li>
+                <li class="nav-item" data-section="economy"><i class="fas fa-chart-line"></i> الاقتصاد</li>
+                <li class="nav-item" data-section="navy"><i class="fas fa-ship"></i> البحرية</li>
+                <li class="nav-item" data-section="airforce"><i class="fas fa-fighter-jet"></i> القوات الجوية</li>
+                <li class="nav-item" data-section="corporations"><i class="fas fa-building"></i> الشركات</li>
+                <li class="nav-item classified-link" data-section="archive"><i class="fas fa-folder-closed"></i> الأرشيف السري <span class="class-badge">مصنف</span></li>
+                <li class="nav-item classified-link" data-section="reports"><i class="fas fa-file-signature"></i> التقارير اليومية <span class="class-badge">سري</span></li>
+                <li class="nav-item classified-link" data-section="comms"><i class="fas fa-satellite-dish"></i> الاتصالات المشفرة <span class="class-badge">TS</span></li>
+                <li class="nav-item classified-link" data-section="projects"><i class="fas fa-flask"></i> المشاريع الخاصة <span class="class-badge">سري</span></li>
+                <li class="nav-item classified-link" data-section="global"><i class="fas fa-globe"></i> العمليات العالمية <span class="class-badge">TS/SCI</span></li>
+            </ul>
+        </nav>
+        <!-- الطبقة المعتمة للقائمة الجانبية في الهاتف -->
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+        <!-- المحتوى الرئيسي -->
+        <main id="main-content">
+            <!-- قسم الأخبار (الرئيسي) -->
+            <section id="section-home" class="content-section active-section">
+                <!-- البانر الرئيسي -->
+                <div class="hero-banner glass-panel">
+                    <div class="hero-content">
+                        <h2 class="hero-title">موجز العمليات الفيدرالية</h2>
+                        <p class="hero-subtitle">النشاط العالمي المباشر - تحديثات آنية من غرفة العمليات</p>
+                    </div>
+                    <div class="hero-visual">
+                        <i class="fas fa-satellite hero-icon"></i>
                     </div>
                 </div>
 
-                <div class="wiki-style-card">
-                    <h3>تقرير رسمي: اختتام الحسابات الدفترية وحظر أسرار الدولة</h3>
-                    <p>أعلن ديوان المحاسبة المركزي بواشنطن العاصمة عن إنهاء تقارير البيانات الميدانية لعام 1925 وإغلاق الموازنات المالية الحكومية. طبقاً للتوجيهات الرئاسية المشتركة، فقد تم تشفير كافة الأقسام الحيوية المتعلقة بتحركات الجيوش، تفاصيل البوارج، مخزونات النفط، وعمليات جهاز الاستخبارات السرية لمنع تسريبها للدول الأجنبية.</p>
-                    <div class="gov-blockquote">
-                        "يُحظر تماماً الإطلاع على مواقع الوحدات التكتيكية الحية أو بيانات وزارة الحرب إلا لحاملي تصاريح الفئة (أ) عبر إدخال شفرة التحقق المركزية الصادرة من البنتاغون."
-                        <br><small>— هيئة الأركان المشتركة، ديسمبر 1925.</small>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ================= القسم 1: لوحة القيادة الفيدرالية (مشفرة - محاكاة الصورة) ================= -->
-            <section id="dashboard" class="content-section hidden-secure hidden">
-                <!-- المكونات الكبرى المطابقة للصورة 1000009329.png -->
-                <div class="dashboard-grid-top">
-                    
-                    <!-- لوحة الترحيب والحالة والسرية -->
-                    <div class="dash-welcome-card">
-                        <div class="welcome-header">
-                            <h2>الأرشيف الفيدرالي الأمريكي</h2>
-                            <p>نظام المعلومات الاستخباراتية الفيدرالية</p>
-                        </div>
-                        <p class="sub-text">قاعدة البيانات الرسمية والسرية للحكومة الأمريكية.<br>جميع المعلومات محمية بمستوى تشفير عالي.</p>
-                        <span class="system-tag bg-green-opacity">النظام يعمل بشكل طبيعي <span class="green-dot"></span></span>
-                    </div>
-
-                    <!-- صندوق مستوى التصنيف العام -->
-                    <div class="dash-classification-card">
-                        <p class="class-label">مستوى التصنيف العام</p>
-                        <h3 class="text-red font-bold animate-pulse">سري للغاية</h3>
-                        <div class="shield-lock-container">
-                            <i class="fa-solid fa-shield-cat"></i>
-                        </div>
-                        <p class="footnote">جميع الأنظمة محمية</p>
-                    </div>
-
-                    <!-- النشاط العالمي المباشر (رادار مصغر مصمم كالصورة) -->
-                    <div class="dash-activity-card">
-                        <div class="card-header-flex">
-                            <span>النشاط العالمي المباشر</span>
-                            <span class="live-tag">مباشر</span>
-                        </div>
-                        <div class="mini-world-map-placeholder">
-                            <div class="ping-point" style="top: 30%; left: 25%;"></div>
-                            <div class="ping-point" style="top: 45%; left: 70%;"></div>
-                        </div>
-                        <div class="mini-stats-row">
-                            <div><small>دول تحت المراقبة</small><h4>42</h4></div>
-                            <div><small>عمليات نشطة</small><h4>13</h4></div>
-                            <div><small>تنبيهات أمنية</small><h4>07</h4></div>
-                            <div><small>تقارير استخباراتية اليوم</small><h4>24</h4></div>
+                <!-- شبكة البطاقات الإحصائية -->
+                <div class="stats-grid">
+                    <div class="stat-card glass-panel">
+                        <i class="fas fa-dollar-sign"></i>
+                        <div class="stat-info">
+                            <span class="stat-value counter" data-target="892.4">0</span>
+                            <span class="stat-label">الناتج المحلي (مليار)</span>
                         </div>
                     </div>
-                </div>
-
-                <!-- شريط المؤشرات الاقتصادية الأساسية للدولة عام 1925 -->
-                <div class="fed-stats-row-cards">
-                    <div class="stat-mini-box">
-                        <div class="box-icon"><i class="fa-solid fa-chart-bar text-green"></i></div>
-                        <div><p>الناتج المحلي الإجمالي</p><h4>800 <span class="text-green text-xs">▲ +3.7%</span></h4><small>مليار دولار</small></div>
+                    <div class="stat-card glass-panel">
+                        <i class="fas fa-coins"></i>
+                        <div class="stat-info">
+                            <span class="stat-value counter" data-target="204.7">0</span>
+                            <span class="stat-label">احتياطي الذهب (طن)</span>
+                        </div>
                     </div>
-                    <div class="stat-mini-box">
-                        <div class="box-icon"><i class="fa-solid fa-wallet text-green"></i></div>
-                        <div><p>الدخل السنوي للبلاد</p><h4>95 <span class="text-green text-xs">▲ +2.4%</span></h4><small>مليار دولار</small></div>
+                    <div class="stat-card glass-panel">
+                        <i class="fas fa-oil-can"></i>
+                        <div class="stat-info">
+                            <span class="stat-value counter" data-target="340.2">0</span>
+                            <span class="stat-label">احتياطي النفط (مليون برميل)</span>
+                        </div>
                     </div>
-                    <div class="stat-mini-box">
-                        <div class="box-icon"><i class="fa-solid fa-cubes text-yellow"></i></div>
-                        <div><p>احتياطي الذهب</p><h4>3.5</h4><small>مليار دولار</small></div>
+                    <div class="stat-card glass-panel">
+                        <i class="fas fa-users"></i>
+                        <div class="stat-info">
+                            <span class="stat-value counter" data-target="1.75">0</span>
+                            <span class="stat-label">إجمالي القوات (مليون)</span>
+                        </div>
                     </div>
-                    <div class="stat-mini-box">
-                        <div class="box-icon"><i class="fa-solid fa-oil-can"></i></div>
-                        <div><p>احتياطي النفط المؤكد</p><h4>6.75</h4><small>مليار برميل</small></div>
+                    <div class="stat-card glass-panel">
+                        <i class="fas fa-tank"></i>
+                        <div class="stat-info">
+                            <span class="stat-value counter" data-target="12450">0</span>
+                            <span class="stat-label">دبابات / مركبات مدرعة</span>
+                        </div>
                     </div>
-                    <div class="stat-mini-box">
-                        <div class="box-icon"><i class="fa-solid fa-coins"></i></div>
-                        <div><p>سعر الصرف</p><h4>1 USD = 2.6 JPY</h4><small>الين الياباني</small></div>
+                    <div class="stat-card glass-panel">
+                        <i class="fas fa-fighter-jet"></i>
+                        <div class="stat-info">
+                            <span class="stat-value counter" data-target="8650">0</span>
+                            <span class="stat-label">طائرات حربية</span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <i class="fas fa-ship"></i>
+                        <div class="stat-info">
+                            <span class="stat-value counter" data-target="342">0</span>
+                            <span class="stat-label">مدمرات / طرادات</span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <i class="fas fa-water"></i>
+                        <div class="stat-info">
+                            <span class="stat-value counter" data-target="98">0</span>
+                            <span class="stat-label">غواصات نشطة</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- تفاصيل وتوزيع القوات والشركات والإنفاق والتحذيرات -->
-                <div class="dashboard-grid-bottom">
-                    <!-- توزيع القوات الاستراتيجية -->
-                    <div class="data-block-card">
-                        <h4>توزيع القوات الأمريكية</h4>
-                        <ul class="data-list-styled">
-                            <li><span>القيادة الشمالية الشرقية</span><strong>120,000</strong></li>
-                            <li><span>القيادة الوسطى</span><strong>150,000</strong></li>
-                            <li><span>القيادة الجنوبية الشرقية</span><strong>80,000</strong></li>
-                            <li><span>القيادة الجنوبية الغربية</span><strong>100,000</strong></li>
-                            <li><span>القيادة الغربية</span><strong>200,000</strong></li>
-                            <li><span>قوات الاحتلال - المكسيك</span><strong>80,000</strong></li>
-                            <li><span>الفلبين وغوام وهاواي</span><strong>100,000</strong></li>
-                            <li><span>الاحتياطي الاستراتيجي العام</span><strong>450,000</strong></li>
+                <!-- الخريطة التفاعلية والتقارير -->
+                <div class="two-columns">
+                    <div class="map-container glass-panel">
+                        <h3><i class="fas fa-map-marked-alt"></i> مسرح العمليات العالمي</h3>
+                        <div id="leaflet-map"></div>
+                    </div>
+                    <div class="alerts-panel glass-panel">
+                        <h3><i class="fas fa-exclamation-triangle"></i> تحذيرات أمنية فورية</h3>
+                        <ul class="alert-list">
+                            <li class="alert-item critical"><span class="alert-time">14:22</span> تحرك أسطول معادٍ في المحيط الهادئ</li>
+                            <li class="alert-item high"><span class="alert-time">13:45</span> اعتراض إشارة مشفرة - القطاع 7</li>
+                            <li class="alert-item medium"><span class="alert-time">12:10</span> تقرير استخباراتي: نشاط غير اعتيادي في أوروبا الشرقية</li>
+                            <li class="alert-item critical"><span class="alert-time">11:05</span> طائرة استطلاع مفقودة فوق القطب الشمالي</li>
                         </ul>
                     </div>
-
-                    <!-- إجماليات القوات المسلحة -->
-                    <div class="data-block-card">
-                        <h4>القوات المسلحة - ملخص عام</h4>
-                        <div class="military-summary-grid">
-                            <div><span>الجنود</span><strong>1,280,000</strong></div>
-                            <div><span>الدبابات</span><strong>1,550</strong></div>
-                            <div><span>الطائرات</span><strong>2,700</strong></div>
-                            <div><span>المدفعية</span><strong>4,600</strong></div>
-                            <div><span>البوارج</span><strong>12</strong></div>
-                            <div><span>المدمرات</span><strong>130</strong></div>
-                            <div><span>الغواصات</span><strong>100</strong></div>
-                        </div>
-                    </div>
-
-                    <!-- التنبيهات الأمنية العاجلة -->
-                    <div class="data-block-card">
-                        <h4>التنبيهات الأمنية الأخيرة</h4>
-                        <div class="security-alerts-container">
-                            <div class="alert-item-danger">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                <div><p>محاولة اختراق مشبوهة من عنوان IP غير معروف</p><small>قبل 2 دقيقة</small></div>
-                            </div>
-                            <div class="alert-item-danger">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                <div><p>زيادة غير طبيعية في حركة الاتصالات المشفرة</p><small>قبل 7 دقيقة</small></div>
-                            </div>
-                            <div class="alert-item-danger">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                <div><p>تحركات عسكرية مريبة في المحيط الهادي</p><small>قبل 15 دقيقة</small></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- أهم الشركات الاحتكارية وتوزيع ميزانيات الإنفاق -->
-                <div class="dashboard-grid-footer">
-                    <div class="data-block-card">
-                        <h4>أهم الشركات الأمريكية (1925)</h4>
-                        <div class="companies-progress-vertical">
-                            <div><p>Standard Oil (نيوجيرسي) - السيطرة على النفط</p><div class="prog-bar"><div class="fill" style="width: 35%;"></div></div><span>35% من الإنتاج</span></div>
-                            <div><p>U.S. Steel - الصلب والمعادن</p><div class="prog-bar"><div class="fill" style="width: 45%;"></div></div><span>45% من الإنتاج</span></div>
-                            <div><p>Ford Motor Co. - السيارات والشاحنات</p><div class="prog-bar"><div class="fill" style="width: 50%;"></div></div><span>50% من السوق</span></div>
-                            <div><p>AT&T - الاتصالات السلكية واللاسلكية</p><div class="prog-bar"><div class="fill" style="width: 90%;"></div></div><span>90% احتكار كامل</span></div>
-                        </div>
-                    </div>
-
-                    <div class="data-block-card">
-                        <h4>توزيع الميزانية الفيدرالية (الإنفاق الاستراتيجي)</h4>
-                        <div class="budget-chart-donut-simulation">
-                            <div class="donut-segment-list">
-                                <div><span class="dot bg-red"></span> وزارة الحرب: 34.6%</div>
-                                <div><span class="dot bg-blue"></span> وزارة البحرية: 18.2%</div>
-                                <div><span class="dot bg-yellow"></span> الاستخبارات والعمليات: 7.6%</div>
-                                <div><span class="dot bg-muted"></span> باقي الوزارات والمصالح: 39.6%</div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </section>
 
-            <!-- ================= القسم 2: مركز القيادة (الخريطة والرادار التفاعلي الحي) ================= -->
-            <section id="cmd-center" class="content-section hidden-secure hidden">
-                <div class="section-title-tactical">
-                    <h2>مركز القيادة والسيطرة الاستراتيجي | نظام التتبع البحري والجوي الحي</h2>
-                    <p>نظام رصد تفاعلي يعرض التحركات الآنية للقطع العسكرية الفيدرالية في البحار والأجواء بأسلوب Flightradar24.</p>
-                </div>
-
-                <div class="tactical-radar-layout">
-                    <!-- لوحة التفاصيل والبيانات الجانبية المنبثقة عند الضغط على قطعة بالخريطة -->
-                    <div class="radar-live-details-panel" id="unit-details-sidebar">
-                        <div class="panel-placeholder-state" id="sidebar-empty-state">
-                            <i class="fa-solid fa-satellite-dish animate-spin-slow"></i>
-                            <p>برج المراقبة المركزي: بانتظار تحديد قطعة عسكرية من الخريطة لاعتراض وفك تشفير وثيقتها العسكرية الحية.</p>
-                        </div>
-                        <div class="panel-real-data-state hidden" id="sidebar-data-state">
-                            <div class="panel-header-badge">
-                                <h3 id="panel-unit-name">البارجة يو إس إس أريزونا</h3>
-                                <span class="badge-type-mil" id="panel-unit-type">بحرية ثقيلة</span>
-                            </div>
-
-                            <!-- صور أرشيفية متوافقة تاريخياً مع الحرب والقطع عام 1925 -->
-                            <div class="unit-historical-img-box">
-                                <img id="img-asset-ship" class="hidden" src="https://images.unsplash.com/photo-1507682531662-421b17a471c1?q=80&w=400&auto=format&fit=crop" alt="Ship asset">
-                                <img id="img-asset-plane" class="hidden" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=400&auto=format&fit=crop" alt="Plane asset">
-                            </div>
-
-                            <table class="radar-specs-table">
-                                <tr>
-                                    <td><i class="fa-solid fa-users"></i> <strong>عدد الطاقم الفعلي:</strong></td>
-                                    <td id="panel-unit-crew">--</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa-solid fa-gun"></i> <strong>مصفوفة التسليح الكاملة:</strong></td>
-                                    <td id="panel-unit-weapons" class="text-red font-bold">--</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa-solid fa-route"></i> <strong>مسار التحرك والوجهة:</strong></td>
-                                    <td id="panel-unit-route">--</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa-solid fa-clock"></i> <strong>الوقت المتبقي للوصول:</strong></td>
-                                    <td id="panel-unit-eta" class="text-blue font-bold">--</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- حاوية الخريطة التفاعلية الحية Leaflet Map -->
-                    <div class="map-render-container">
-                        <div id="leafletRadarMap"></div>
-                    </div>
-                </div>
+            <!-- باقي الأقسام (مخفية افتراضياً) -->
+            <!-- يمكن إضافة محتوى مشابه للأقسام الأخرى بنفس النمط -->
+            <section id="section-command" class="content-section">
+                <div class="glass-panel"><h2>مركز القيادة</h2><p>محتوى مصنف. المصادقة مطلوبة.</p></div>
             </section>
-
-            <!-- ================= القسم 8: القوات البرية (مشفرة كمثال لباقي الجداول) ================= -->
-            <section id="army" class="content-section hidden-secure hidden">
-                <div class="section-title-tactical">
-                    <h2>ترسانة السلاح والمعدات - القوات البرية الفيدرالية</h2>
-                </div>
-                <div class="table-container-responsive">
-                    <table class="tactical-table">
-                        <thead>
-                            <tr>
-                                <th>الطراز</th>
-                                <th>العدد بالخدمة</th>
-                                <th>النوع والتصنيف</th>
-                                <th>المواصفات العسكرية القياسية</th>
-                                <th>التوزيع الجغرافي الميداني</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="font-bold text-blue">M1922 Thunder</td>
-                                <td>800 دبابة</td>
-                                <td>دبابة ثقيلة سريعة</td>
-                                <td>مدفع رئيسي 57 ملم، 3 رشاشات Browning M1917، سرعة 30 كم/س، طاقم 5 أفراد</td>
-                                <td>فورت هود (150)، فورت لويس (180)، المكسيك (150)، الاحتياطي (100)</td>
-                            </tr>
-                            <tr>
-                                <td class="font-bold text-blue">M1923 Thunderbolt</td>
-                                <td>400 دبابة</td>
-                                <td>دبابة خفيفة استطلاع</td>
-                                <td>مدفع رئيسي 37 ملم، رشاشان Browning، سرعة 45 كم/س، طاقم 3 أفراد</td>
-                                <td>كتائب أريزونا وتكساس (150)، المكسيك (100)، الفلبين (100)</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <section id="section-war" class="content-section">
+                <div class="glass-panel"><h2>وزارة الحرب</h2><p>محتوى مصنف. المصادقة مطلوبة.</p></div>
             </section>
-
-            <!-- بقية الأقسام الـ 23 تفتح بنفس آلية الأمان والحماية التلقائية بالتبديل -->
-
+            <section id="section-intel" class="content-section">
+                <div class="glass-panel"><h2>الاستخبارات</h2><p>محتوى مصنف. المصادقة مطلوبة.</p></div>
+            </section>
+            <section id="section-security" class="content-section">
+                <div class="glass-panel"><h2>الأمن القومي</h2><p>محتوى مصنف. المصادقة مطلوبة.</p></div>
+            </section>
+            <section id="section-economy" class="content-section">
+                <div class="glass-panel"><h2>الاقتصاد</h2><p>محتوى مصنف. المصادقة مطلوبة.</p></div>
+            </section>
+            <section id="section-navy" class="content-section">
+                <div class="glass-panel"><h2>البحرية</h2><p>محتوى مصنف. المصادقة مطلوبة.</p></div>
+            </section>
+            <section id="section-airforce" class="content-section">
+                <div class="glass-panel"><h2>القوات الجوية</h2><p>محتوى مصنف. المصادقة مطلوبة.</p></div>
+            </section>
+            <section id="section-corporations" class="content-section">
+                <div class="glass-panel"><h2>الشركات</h2><p>محتوى مصنف. المصادقة مطلوبة.</p></div>
+            </section>
+            <section id="section-archive" class="content-section">
+                <div class="glass-panel"><h2>الأرشيف السري</h2><p>مستوى تصنيف: TS/SCI. الوصول مقيد.</p></div>
+            </section>
+            <section id="section-reports" class="content-section">
+                <div class="glass-panel"><h2>التقارير اليومية</h2><p>محتوى مصنف. المصادقة مطلوبة.</p></div>
+            </section>
+            <section id="section-comms" class="content-section">
+                <div class="glass-panel"><h2>الاتصالات المشفرة</h2><p>قناة مشفرة. المصادقة مطلوبة.</p></div>
+            </section>
+            <section id="section-projects" class="content-section">
+                <div class="glass-panel"><h2>المشاريع الخاصة</h2><p>محتوى مصنف. المصادقة مطلوبة.</p></div>
+            </section>
+            <section id="section-global" class="content-section">
+                <div class="glass-panel"><h2>العمليات العالمية</h2><p>خريطة العمليات. المصادقة مطلوبة.</p></div>
+            </section>
         </main>
     </div>
 
-    <!-- شريط الحقوق السفلي المنسق كالصورة -->
-    <footer class="fed-footer-bar">
-        <div class="footer-right">جميع الحقوق محفوظة للحكومة الفيدرالية للولايات المتحدة الأمريكية</div>
-        <div class="footer-center">Federal Archive System  |  Classification: <span class="text-red font-bold">TOP SECRET</span></div>
-        <div class="footer-left"><i class="fa-solid fa-user-shield"></i> نظام محمي بتشفير عسكري من المستوى الأعلى</div>
-    </footer>
-
-    <script src="script.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- سكريبت المنصة -->
+    <script src="js/script.js"></script>
 </body>
 </html>
