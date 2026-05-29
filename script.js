@@ -15,7 +15,6 @@ const STATE_DATA = {
     topCompany: "Standard Oil (نيوجيرسي)"
 };
 
-// بيانات الأسلحة والوحدات الموسعة
 const militaryTables = {
     tanks: [
         { model: "M1922 Thunder", count: 800, caliber: "مدفع 57 ملم", notes: "دبابة ثقيلة سريعة" },
@@ -56,167 +55,90 @@ const corporationsData = [
     { name: "J.P. Morgan & Co.", sector: "التمويل", share: "الهيمنة على القروض", revenue: "غير معلن" }
 ];
 
-// صفحات المحتوى
-let currentPage = "home";
-let restrictedAccess = { intel: false, archive: false };
+// تخزين حالة فتح الأقسام (كل الأقسام ما عدا "news")
+let unlockedPages = {
+    home: false, military: false, economy: false, diplomacy: false,
+    industry: false, intel: false, navy: false, airforce: false,
+    corporations: false, archive: false
+};
 let pendingPage = null;
 
-// Helper: إنشاء جداول HTML
 function renderTable(headers, rows) {
     let table = '<table class="official-table"><thead><tr>';
     headers.forEach(h => table += `<th>${h}</th>`);
-    table += '</tr></thead><tbody>';
+    table += ' </thead><tbody>';
     rows.forEach(row => {
         table += '<tr>';
         row.forEach(cell => table += `<td>${cell}</td>`);
         table += '</tr>';
     });
-    table += '</tbody></table>';
+    table += '</tbody></tr>';
     return table;
 }
 
-function renderHome() {
+// صفحة الأخبار (مفتوحة بالكامل)
+function renderNews() {
     return `
         <div class="gov-card">
-            <div class="card-header">النظام الفيدرالي للولايات المتحدة الأمريكية - التقرير السنوي 1925</div>
-            <p>أرشيف حكومي استراتيجي يوثق البيانات العسكرية والاقتصادية والصناعية. جميع المعلومات معتمدة من وزارة الحرب والخزانة.</p>
-        </div>
-        <div class="gov-card">
-            <div class="card-header">المؤشرات الرئيسية</div>
-            <div class="stats-grid">
-                <div class="stat-item"><div class="stat-label">الناتج المحلي الإجمالي</div><div class="stat-value">${STATE_DATA.gdp} USD</div></div>
-                <div class="stat-item"><div class="stat-label">الدخل السنوي للبلاد</div><div class="stat-value">${STATE_DATA.annualRevenue} USD</div></div>
-                <div class="stat-item"><div class="stat-label">احتياطي الذهب</div><div class="stat-value">${STATE_DATA.goldReserve} USD</div></div>
-                <div class="stat-item"><div class="stat-label">سعر الصرف</div><div class="stat-value">${STATE_DATA.exchange}</div></div>
-                <div class="stat-item"><div class="stat-label">أهم شركة</div><div class="stat-value">${STATE_DATA.topCompany}</div></div>
-                <div class="stat-item"><div class="stat-label">احتياطي النفط</div><div class="stat-value">${STATE_DATA.oilReserve}</div></div>
-            </div>
-        </div>
-        <div class="gov-card">
-            <div class="card-header">ملخص القوات المسلحة (1925)</div>
-            <div class="stats-grid">
-                <div class="stat-item"><div class="stat-label">إجمالي الجنود</div><div class="stat-value">${STATE_DATA.soldiers}</div></div>
-                <div class="stat-item"><div class="stat-label">الدبابات</div><div class="stat-value">${STATE_DATA.tanks}</div></div>
-                <div class="stat-item"><div class="stat-label">الطائرات</div><div class="stat-value">${STATE_DATA.aircraft}</div></div>
-                <div class="stat-item"><div class="stat-label">المدفعية</div><div class="stat-value">${STATE_DATA.artillery}</div></div>
-                <div class="stat-item"><div class="stat-label">البوارج</div><div class="stat-value">${STATE_DATA.battleships}</div></div>
-                <div class="stat-item"><div class="stat-label">المدمرات</div><div class="stat-value">${STATE_DATA.destroyers}</div></div>
-                <div class="stat-item"><div class="stat-label">الغواصات</div><div class="stat-value">${STATE_DATA.submarines}</div></div>
-            </div>
+            <div class="card-header">النشرة الإخبارية الرسمية - الولايات المتحدة (1925)</div>
+            <p><strong>الحدث الرئيسي:</strong> الانسحاب الجزئي للقوات الأمريكية من المكسيك مستمر، مع بقاء 80,000 جندي لحماية المصالح النفطية.</p>
+            <p><strong>التطورات الدولية:</strong> كتائب المقاومة في الجزائر تواصل السيطرة على المناطق الداخلية، فرنسا تطلب دعماً عسكرياً إضافياً من أمريكا.</p>
+            <p><strong>الاقتصاد:</strong> الفائض التجاري يسجل 2.4 مليار دولار هذا العام، والنفط الأمريكي يغطي 65% من الطلب العالمي.</p>
+            <p><strong>التسلح:</strong> اكتمال نشر أسطول الطائرات M1922 Iron Eagle بالكامل، لتحقيق التفوق الجوي على اليابان.</p>
+            <p><strong>الكونجرس:</strong> مناقشة خطة دعم فرنسا بقيمة 550 مليون دولار مقابل امتيازات بترولية في الصحراء الجزائرية.</p>
+            <p class="stat-value" style="font-size:0.9rem; margin-top:1rem;">آخر تحديث: 15 أبريل 1925</p>
         </div>
     `;
 }
 
-function renderMilitary() {
-    return `
-        <div class="gov-card"><div class="card-header">هيكل القوات البرية - 1925</div>
-        ${renderTable(["الفئة", "العدد", "الملاحظات"], [
-            ["الجيش النظامي", "350,000", "محترفون"],
-            ["الحرس الوطني", "450,000", "جاهز خلال 60 يوم"],
-            ["الاحتياطي المدرب", "400,000", "خبراء سابقون"],
-            ["قوات الاحتلال (المكسيك)", "80,000", "جنرال بيرشينغ"]
-        ])}
-        </div>
-        <div class="gov-card"><div class="card-header">الدبابات (الطرازات)</div>
-        ${renderTable(["الطراز", "العدد", "العيار الرئيسي", "ملاحظات"], militaryTables.tanks.map(t => [t.model, t.count, t.caliber, t.notes]))}
-        </div>
-        <div class="gov-card"><div class="card-header">المدفعية والأسلحة الصغيرة</div>
-        ${renderTable(["السلاح", "النوع", "العيار", "الكمية"], militaryTables.weapons.map(w => [w.name, w.type, w.caliber, w.quantity]))}
-        </div>
-    `;
-}
+function renderHome() { return `<div class="gov-card"><div class="card-header">النظام الفيدرالي - الرئيسية</div><p>بيانات حساسة. تم فتح هذا القسم بتفويض.</p>${renderStats()}</div>`; }
+function renderMilitary() { return `<div class="gov-card"><div class="card-header">الجيش - التفاصيل الكاملة</div>${renderMilitaryTables()}</div>`; }
+function renderEconomy() { return `<div class="gov-card"><div class="card-header">الاقتصاد والميزانية</div>${renderEconomyTables()}</div>`; }
+function renderDiplomacy() { return `<div class="gov-card"><div class="card-header">الدبلوماسية والعلاقات الدولية</div>${renderDiploTables()}</div>`; }
+function renderIndustry() { return `<div class="gov-card"><div class="card-header">الصناعة والإنتاج</div>${renderIndustryTables()}</div>`; }
+function renderIntel() { return `<div class="gov-card"><div class="card-header">الاستخبارات - تقييمات سرية</div><p>تقديرات 1925: إعادة تسليح يابانية، تمويل روسي محتمل لكتائب المقاومة، نظام Voice of God يعمل بكفاءة.</p></div>`; }
+function renderNavy() { return `<div class="gov-card"><div class="card-header">البحرية الأمريكية</div>${renderNavyTables()}</div>`; }
+function renderAirForce() { return `<div class="gov-card"><div class="card-header">القوات الجوية</div>${renderAirForceTables()}</div>`; }
+function renderCorporations() { return `<div class="gov-card"><div class="card-header">الشركات المسيطرة</div>${renderCorpTables()}</div>`; }
+function renderArchive() { return `<div class="gov-card"><div class="card-header">الأرشيف السري</div><p>وثائق العمليات الخاصة والمشاريع العسكرية 1920-1925 متاحة الآن.</p></div>`; }
 
-function renderEconomy() {
-    return `
-        <div class="gov-card"><div class="card-header">المؤشرات الاقتصادية الكلية</div>
-        <div class="stats-grid">
-            <div class="stat-item"><div class="stat-label">الناتج المحلي</div><div class="stat-value">${STATE_DATA.gdp} USD</div></div>
-            <div class="stat-item"><div class="stat-label">الدخل السنوي</div><div class="stat-value">${STATE_DATA.annualRevenue} USD</div></div>
-            <div class="stat-item"><div class="stat-label">الاحتياطي الذهبي</div><div class="stat-value">${STATE_DATA.goldReserve} USD</div></div>
-            <div class="stat-item"><div class="stat-label">الديون المستحقة لأمريكا</div><div class="stat-value">12 مليار USD</div></div>
-        </div>
-        </div>
-        <div class="gov-card"><div class="card-header">الميزانية الفيدرالية والإنفاق العسكري (1925)</div>
-        ${renderTable(["البند", "القيمة"], [["وزارة الحرب", "1.8 مليار USD"], ["وزارة البحرية", "950 مليون USD"], ["مجلس الأبحاث العسكرية", "25 مليون USD"], ["الاستخبارات المركزية", "15 مليون USD"], ["إجمالي الإنفاق الدفاعي", "2.75 مليار USD"]])}
-        </div>
-    `;
-}
-
-function renderIndustry() {
-    return `<div class="gov-card"><div class="card-header">الإنتاج الصناعي والطاقة</div>
-    ${renderTable(["القطاع", "الإنتاج السنوي", "ملاحظات"], [
-        ["الصلب", "45 مليون طن", "الهيمنة لـ US Steel"],
-        ["النفط", "450 مليون برميل", "65% من العالم"],
-        ["السيارات", "2.2 مليون مركبة", "Ford الأكبر"],
-        ["الطيران العسكري", "480 طائرة Iron Eagle", "تفوق على اليابان"]
-    ])}
+function renderStats() {
+    return `<div class="stats-grid">
+        ${Object.entries({ "الناتج المحلي": STATE_DATA.gdp, "الدخل السنوي": STATE_DATA.annualRevenue, "احتياطي الذهب": STATE_DATA.goldReserve, "إجمالي الجنود": STATE_DATA.soldiers, "الدبابات": STATE_DATA.tanks, "الطائرات": STATE_DATA.aircraft }).map(([k,v]) => `<div class="stat-item"><div class="stat-label">${k}</div><div class="stat-value">${v}</div></div>`).join('')}
     </div>`;
 }
-
-function renderCorporations() {
-    return `<div class="gov-card"><div class="card-header">أكبر الشركات المسيطرة - 1925</div>
-    ${renderTable(["الشركة", "القطاع", "الحصة السوقية", "الإيرادات التقريبية"], corporationsData.map(c => [c.name, c.sector, c.share, c.revenue]))}
-    </div>`;
-}
-
-function renderNavy() {
-    return `<div class="gov-card"><div class="card-header">أسطول البحرية الأمريكية</div>
-    ${renderTable(["الطراز/الفئة", "النوع", "التسليح الرئيسي", "الأسطول", "العدد"], militaryTables.navy.map(n => [n.class, n.type, n.mainGuns, n.fleet, n.count]))}
-    </div>
-    <div class="gov-card"><div class="card-header">الغواصات الاستراتيجية (Silent Death)</div>
-    <p>60 غواصة من طراز M1922 Silent Death منتشرة في المحيطين الأطلسي والهادئ. مدى يصل إلى 12,000 كم.</p>
-    </div>`;
-}
-
-function renderAirForce() {
-    return `<div class="gov-card"><div class="card-header">القوات الجوية - الطرازات العاملة</div>
-    ${renderTable(["الطراز", "الدور", "السرعة القصوى", "التسليح/الحمولة", "العدد"], militaryTables.aircraft.map(a => [a.type, a.role, a.speed, a.armament, a.count]))}
-    </div>`;
-}
-
-function renderDiplomacy() {
-    return `<div class="gov-card"><div class="card-header">العلاقات الدولية - تقرير 1925</div>
-    <p>فرنسا مدينة لأمريكا بـ6 مليار دولار، بريطانيا 6 مليار. دعم عسكري محدود لفرنسا في الأزمة الجزائرية. التوتر مع اليابان مستمر بسبب التفوق التكنولوجي. احتلال المكسيك مستمر مع خطة سحب جزئي للقوات.</p>
-    ${renderTable(["الدولة", "نوع العلاقة", "الديون/الملاحظات"], [
-        ["بريطانيا", "حليف استراتيجي", "ديون 6 مليار"],
-        ["فرنسا", "حليف متوتر", "دعم عسكري ولوجستي"],
-        ["اليابان", "منافس عسكري وتجاري", "فجوة تقنية لصالح أمريكا"],
-        ["المكسيك", "منطقة احتلال", "80,000 جندي أمريكي"]
-    ])}
-    </div>`;
-}
-
-function renderIntel() {
-    return `<div class="gov-card"><div class="card-header">قاعدة الاستخبارات المركزية - تصنيف سري للغاية</div>
-    <p>تقديرات 1925: كتائب المقاومة في الجزائر غير معروفة المصدر، يابان تعيد تسليح جيشها، روسيا السوفيتية في حالة حرب أهلية هادئة. نظام Voice of God المشفر يضمن أمن الاتصالات الأمريكية.</p>
-    <p>تم فتح هذا القسم بتفويض خاص من الرئيس.</p>
-    </div>`;
-}
-
-function renderArchive() {
-    return `<div class="gov-card"><div class="card-header">الأرشيف العسكري - الوثائق المؤرشفة 1920-1925</div>
-    <p>سجلات مشاريع إعادة التسلح: IRON EAGLE، THUNDER ROAD، SILENT DEATH، VOICE OF GOD، HARVEST. التكلفة الإجمالية 305 مليون دولار.</p>
-    <p>خطط انسحاب المكسيك – 1924، توجيهات الرئيس Machiavelli.</p>
-    </div>`;
-}
+function renderMilitaryTables() { return renderTable(["الطراز", "العدد", "العيار", "ملاحظات"], militaryTables.tanks.map(t => [t.model, t.count, t.caliber, t.notes])); }
+function renderEconomyTables() { return renderTable(["البند", "القيمة"], [["وزارة الحرب", "1.8 مليار"], ["وزارة البحرية", "950 مليون"], ["الاستخبارات", "15 مليون"], ["إجمالي الإنفاق الدفاعي", "2.75 مليار"]]); }
+function renderDiploTables() { return renderTable(["الدولة", "العلاقة", "الديون/ملاحظات"], [["بريطانيا","حليف","6 مليار"],["فرنسا","حليف متوتر","6 مليار + دعم"],["اليابان","منافس","فجوة تقنية"],["المكسيك","احتلال","80,000 جندي"]]); }
+function renderIndustryTables() { return renderTable(["القطاع","الإنتاج","الملاحظات"],[["الصلب","45 مليون طن","US Steel"],["النفط","450 مليون برميل","65% عالمياً"],["السيارات","2.2 مليون","Ford"],["الطيران","480 طائرة/سنة","Iron Eagle"]]); }
+function renderNavyTables() { return renderTable(["الفئة","النوع","التسليح","الأسطول","العدد"], militaryTables.navy.map(n => [n.class, n.type, n.mainGuns, n.fleet, n.count])); }
+function renderAirForceTables() { return renderTable(["الطراز","الدور","السرعة","التسليح","العدد"], militaryTables.aircraft.map(a => [a.type, a.role, a.speed, a.armament, a.count])); }
+function renderCorpTables() { return renderTable(["الشركة","القطاع","الحصة","الإيرادات"], corporationsData.map(c => [c.name, c.sector, c.share, c.revenue])); }
 
 function loadPage(page) {
     let content = "";
-    switch(page) {
-        case "home": content = renderHome(); break;
-        case "military": content = renderMilitary(); break;
-        case "economy": content = renderEconomy(); break;
-        case "diplomacy": content = renderDiplomacy(); break;
-        case "industry": content = renderIndustry(); break;
-        case "navy": content = renderNavy(); break;
-        case "airforce": content = renderAirForce(); break;
-        case "corporations": content = renderCorporations(); break;
-        case "intel": content = restrictedAccess.intel ? renderIntel() : "<div class='gov-card'><div class='card-header'>مقيد</div><p>هذه المعلومات مصنفة سرية. يلزم التحقق.</p></div>"; break;
-        case "archive": content = restrictedAccess.archive ? renderArchive() : "<div class='gov-card'><div class='card-header'>مقيد</div><p>الوصول غير مصرح به. يتطلب تخويل أمني.</p></div>"; break;
-        default: content = renderHome();
+    if (page === "news") {
+        content = renderNews();
+    } else {
+        if (!unlockedPages[page]) {
+            content = `<div class="gov-card"><div class="card-header">مقيد</div><p>هذه المعلومات مصنفة سرية. يلزم التحقق من الصلاحية.</p></div>`;
+        } else {
+            switch(page) {
+                case "home": content = renderHome(); break;
+                case "military": content = renderMilitary(); break;
+                case "economy": content = renderEconomy(); break;
+                case "diplomacy": content = renderDiplomacy(); break;
+                case "industry": content = renderIndustry(); break;
+                case "intel": content = renderIntel(); break;
+                case "navy": content = renderNavy(); break;
+                case "airforce": content = renderAirForce(); break;
+                case "corporations": content = renderCorporations(); break;
+                case "archive": content = renderArchive(); break;
+                default: content = renderHome();
+            }
+        }
     }
     document.getElementById("page-content").innerHTML = content;
-    // تفعيل الرابط النشط
     document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
     document.querySelector(`.nav-link[data-page="${page}"]`).classList.add('active');
 }
@@ -228,28 +150,19 @@ function showModal(targetPage) {
     document.getElementById('secretPassword').value = '';
     document.getElementById('passError').innerText = '';
 }
-
-function closeModal() {
-    document.getElementById('accessModal').style.display = 'none';
-    pendingPage = null;
-}
-
+function closeModal() { document.getElementById('accessModal').style.display = 'none'; pendingPage = null; }
 function verifyPassword() {
     const pass = document.getElementById('secretPassword').value;
     if (pass === "20083020117") {
-        if (pendingPage === 'intel') restrictedAccess.intel = true;
-        else if (pendingPage === 'archive') restrictedAccess.archive = true;
+        if (pendingPage && unlockedPages.hasOwnProperty(pendingPage)) {
+            unlockedPages[pendingPage] = true;
+        }
         closeModal();
         loadPage(pendingPage);
-        // رسالة نجاح بسيطة في console أو toast
         const msgDiv = document.createElement('div');
-        msgDiv.style.position = 'fixed';
-        msgDiv.style.bottom = '20px';
-        msgDiv.style.right = '20px';
-        msgDiv.style.background = '#1e3a5f';
-        msgDiv.style.padding = '0.7rem 1.2rem';
-        msgDiv.style.borderRadius = '8px';
-        msgDiv.innerText = 'تم التحقق من صلاحية الوصول';
+        msgDiv.style.position = 'fixed'; msgDiv.style.bottom = '20px'; msgDiv.style.right = '20px';
+        msgDiv.style.background = '#1e3a5f'; msgDiv.style.padding = '0.7rem 1.2rem';
+        msgDiv.style.borderRadius = '8px'; msgDiv.innerText = 'تم التحقق من صلاحية الوصول';
         document.body.appendChild(msgDiv);
         setTimeout(() => msgDiv.remove(), 2500);
     } else {
@@ -258,32 +171,25 @@ function verifyPassword() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // وقت مباشر
     const timeEl = document.getElementById('liveTime');
-    function updateTime() {
-        const now = new Date();
-        timeEl.innerText = now.toLocaleString('ar-EG', { hour12: false });
-    }
-    updateTime();
-    setInterval(updateTime, 1000);
-    
-    loadPage("home");
-    
-    // روابط القائمة
+    function updateTime() { timeEl.innerText = new Date().toLocaleString('ar-EG', { hour12: false }); }
+    updateTime(); setInterval(updateTime, 1000);
+    loadPage("news");
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const page = link.getAttribute('data-page');
-            if ((page === 'intel' || page === 'archive') && 
-                ((page === 'intel' && !restrictedAccess.intel) || (page === 'archive' && !restrictedAccess.archive))) {
-                showModal(page);
+            if (page === "news") {
+                loadPage("news");
                 return;
             }
-            currentPage = page;
-            loadPage(page);
+            if (!unlockedPages[page]) {
+                showModal(page);
+            } else {
+                loadPage(page);
+            }
         });
     });
-    
     document.getElementById('confirmPassBtn').addEventListener('click', verifyPassword);
     document.getElementById('cancelPassBtn').addEventListener('click', closeModal);
     document.getElementById('accessModal').addEventListener('click', (e) => { if(e.target === document.getElementById('accessModal')) closeModal(); });
