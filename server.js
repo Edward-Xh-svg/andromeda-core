@@ -1,460 +1,399 @@
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
+// --- Middleware ---
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// ============ قاعدة البيانات المؤقتة ============
-const nationsDB = {
-    'usa': {
-        code: '1010101',
-        name: 'الولايات المتحدة الأمريكية',
-        role: 'president',
-        representative: 'فرانكلين روزفلت',
-        budget: 5000000,
-        military: { infantry: 150000, tanks: 200, aircraft: 350, submarines: 50 },
-        territories: 12,
-        treasury: 1200000,
-        resources: { oil: 800, steel: 600, food: 1000 }
-    },
-    'malines': {
-        code: '2020202',
-        name: 'دولة مالينس',
-        role: 'diplomat',
-        representative: 'Erik Machiavelli',
-        budget: 2800000,
-        military: { infantry: 85000, tanks: 120, aircraft: 200, submarines: 35 },
-        territories: 7,
-        treasury: 900000,
-        resources: { oil: 450, steel: 380, food: 700 }
-    },
-    'soviet': {
-        code: '3030303',
-        name: 'الاتحاد السوفيتي',
-        role: 'diplomat',
-        representative: 'جوزيف ستالين',
-        budget: 4200000,
-        military: { infantry: 200000, tanks: 350, aircraft: 280, submarines: 80 },
-        territories: 15,
-        treasury: 1500000,
-        resources: { oil: 950, steel: 750, food: 900 }
-    },
-    'china': {
-        code: '4040404',
-        name: 'الإمبراطورية الصينية',
-        role: 'diplomat',
-        representative: 'صن يات سين',
-        budget: 3500000,
-        military: { infantry: 180000, tanks: 180, aircraft: 250, submarines: 45 },
-        territories: 10,
-        treasury: 1100000,
-        resources: { oil: 500, steel: 550, food: 1100 }
+// --- Data File Paths ---
+const COUNTRIES_FILE = path.join(__dirname, 'data', 'countries.json');
+const ARSENAL_FILE = path.join(__dirname, 'data', 'arsenal.json');
+const CHAT_FILE = path.join(__dirname, 'data', 'chat_log.json');
+
+// --- Helper Functions ---
+function readJsonFile(filePath) {
+    try {
+        const rawData = fs.readFileSync(filePath, 'utf-8');
+        return JSON.parse(rawData);
+    } catch (error) {
+        console.error(`Error reading file ${filePath}:`, error);
+        return null;
     }
-};
+}
 
-const weaponsStore = [
-    { id: 1, name: 'دبابة M1922 Thunder', type: 'tank', price: 150000, stock: 25, damage: 85, defense: 70, armor: 65 },
-    { id: 2, name: 'مقاتلة Iron Eagle', type: 'aircraft', price: 220000, stock: 15, damage: 95, defense: 45, speed: 80 },
-    { id: 3, name: 'غواصة Silent Death', type: 'submarine', price: 350000, stock: 10, damage: 90, defense: 80, stealth: 85 },
-    { id: 4, name: 'مدفعية Long Reach', type: 'artillery', price: 180000, stock: 20, damage: 75, defense: 55, range: 90 },
-    { id: 5, name: 'قاذفة صواريخ Red Storm', type: 'rocket', price: 280000, stock: 12, damage: 100, defense: 35, precision: 70 },
-    { id: 6, name: 'حاملة طائرات Ocean Fortress', type: 'carrier', price: 500000, stock: 5, damage: 60, defense: 95, capacity: 50 }
-];
-
-let chatMessages = [
-    { 
-        id: 1, 
-        nation: 'usa', 
-        sender: 'فرانكلين روزفلت', 
-        message: 'نرحب بجميع الدبلوماسيين في هذه القناة المشفرة',
-        timestamp: new Date().toISOString(),
-        type: 'diplomatic'
+function writeJsonFile(filePath, data) {
+    try {
+        fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+        return true;
+    } catch (error) {
+        console.error(`Error writing file ${filePath}:`, error);
+        return false;
     }
-];
+}
 
-let newsFeed = [
-    {
-        id: 1,
-        title: 'معاهدة عدم اعتداء جديدة',
-        content: 'تم توقيع معاهدة عدم اعتداء بين الولايات المتحدة ودولة مالينس لتعزيز السلام الإقليمي.',
-        timestamp: new Date().toISOString(),
-        pinned: true,
-        author: 'usa',
-        category: 'diplomacy'
+// Initialize secret codes and chat log file on server start
+function initializeGameData() {
+    let countries = readJsonFile(COUNTRIES_FILE);
+    if (!countries) {
+        console.error("CRITICAL: Could not load countries data.");
+        return;
     }
-];
 
-let sessions = {};
-let diplomaticRelations = {
-    'usa': { 'malines': 75, 'soviet': 30, 'china': 45 },
-    'malines': { 'usa': 75, 'soviet': 50, 'china': 60 },
-    'soviet': { 'usa': 30, 'malines': 50, 'china': 70 },
-    'china': { 'usa': 45, 'malines': 60, 'soviet': 70 }
-};
-
-let economicTransactions = [];
-let militaryCampaigns = [];
-
-// ============ Middleware ============
-const authenticateSession = (req, res, next) => {
-    const sessionId = req.headers['session-id'];
-    if (!sessionId || !sessions[sessionId]) {
-        return res.status(401).json({ error: 'غير مصرح بالدخول' });
+    let hasUpdated = false;
+    const countriesWithNullCode = countries.filter(c => c.secret_code === null);
+    
+    if (countriesWithNullCode.length > 0) {
+        console.log(`Generating secret codes for ${countriesWithNullCode.length} nations...`);
+        countries = countries.map(country => {
+            if (country.secret_code === null) {
+                let newCode;
+                do {
+                    newCode = String(Math.floor(1000000 + Math.random() * 9000000));
+                } while (countries.some(c => c.secret_code === newCode));
+                console.log(`   - ${country.name}: ${newCode}`);
+                return { ...country, secret_code: newCode };
+            }
+            return country;
+        });
+        hasUpdated = true;
     }
-    req.nation = sessions[sessionId].nation;
-    req.role = sessions[sessionId].role;
-    req.representative = sessions[sessionId].representative;
-    next();
-};
 
-// ============ نظام تسجيل الدخول ============
+    if (hasUpdated) {
+        if (writeJsonFile(COUNTRIES_FILE, countries)) {
+            console.log("Secret codes generated and saved successfully.");
+        } else {
+            console.error("Failed to save updated countries with secret codes.");
+        }
+    } else {
+        console.log("All countries already have secret codes.");
+    }
+
+    // Initialize chat log if not exists
+    if (!fs.existsSync(CHAT_FILE)) {
+        const initialChat = [
+            {
+                timestamp: new Date().toISOString(),
+                sender: "النظام المركزي",
+                senderId: "system",
+                message: "[إشارة بدء التشغيل] أثير الاتصالات الآن تحت مراقبة الإدارة الفيدرالية.",
+                type: "system"
+            }
+        ];
+        writeJsonFile(CHAT_FILE, initialChat);
+        console.log("Chat log initialized.");
+    }
+}
+
+// --- API Endpoints ---
+
+// 1. Login Endpoint
 app.post('/api/login', (req, res) => {
-    const { nation, representative, code } = req.body;
-    
-    if (!nationsDB[nation]) {
-        return res.status(400).json({ error: 'الدولة غير موجودة في النظام' });
+    const { countryName, secretCode } = req.body;
+
+    if (!countryName || !secretCode) {
+        return res.status(400).json({ success: false, message: "مطلوب اسم الدولة والرمز السري." });
     }
-    
-    if (nationsDB[nation].code !== code) {
-        return res.status(401).json({ error: 'الرمز السري غير صحيح' });
+
+    const countries = readJsonFile(COUNTRIES_FILE);
+    if (!countries) {
+        return res.status(500).json({ success: false, message: "فشل في قراءة بيانات الخادم." });
     }
-    
-    const sessionId = Math.random().toString(36).substring(7) + Date.now().toString(36);
-    sessions[sessionId] = {
-        nation: nation,
-        role: nationsDB[nation].role,
-        representative: representative || nationsDB[nation].representative,
-        loginTime: new Date()
-    };
-    
-    res.json({
-        sessionId,
-        nation: nation,
-        role: nationsDB[nation].role,
-        representative: representative || nationsDB[nation].representative,
-        nationName: nationsDB[nation].name,
-        budget: nationsDB[nation].budget,
-        military: nationsDB[nation].military,
-        territories: nationsDB[nation].territories,
-        treasury: nationsDB[nation].treasury,
-        resources: nationsDB[nation].resources
-    });
+
+    const country = countries.find(c => c.name === countryName && c.secret_code === secretCode);
+
+    if (country) {
+        console.log(`Successful login: ${country.name} (${country.name_ar})`);
+        return res.json({
+            success: true,
+            message: `مرحباً بك، قائد ${country.name_ar}. القيادة المركزية جاهزة.`,
+            country: {
+                id: country.id,
+                name: country.name,
+                name_ar: country.name_ar,
+                role: country.role,
+                role_ar: country.role_ar,
+                budget: country.budget,
+                arsenal: country.arsenal,
+                css_class: country.css_class
+            }
+        });
+    } else {
+        console.log(`Failed login attempt: ${countryName} with code ${secretCode}`);
+        return res.status(401).json({ success: false, message: "فشل المصادقة: اسم الدولة أو الرمز السري غير صحيح." });
+    }
 });
 
-// ============ نظام المعلومات الوطنية ============
-app.get('/api/nation', authenticateSession, (req, res) => {
-    const nation = nationsDB[req.nation];
-    res.json({
-        nation: req.nation,
-        role: req.role,
-        representative: req.representative,
-        nationName: nation.name,
-        budget: nation.budget,
-        military: nation.military,
-        territories: nation.territories,
-        treasury: nation.treasury,
-        resources: nation.resources
-    });
-});
-
-// ============ نظام الأخبار ============
-app.get('/api/news', authenticateSession, (req, res) => {
-    const sortedNews = [...newsFeed].sort((a, b) => {
-        if (a.pinned && !b.pinned) return -1;
-        if (!a.pinned && b.pinned) return 1;
-        return new Date(b.timestamp) - new Date(a.timestamp);
-    });
-    res.json(sortedNews);
-});
-
-app.post('/api/news', authenticateSession, (req, res) => {
-    if (req.role !== 'president') {
-        return res.status(403).json({ error: 'فقط الرئيس يمكنه نشر الأخبار' });
+// 2. Get All Countries Data (for espionage and general info)
+app.get('/api/countries', (req, res) => {
+    const countries = readJsonFile(COUNTRIES_FILE);
+    if (!countries) {
+        return res.status(500).json({ success: false, message: "فشل في جلب بيانات الدول." });
     }
-    
-    const { title, content, pinned } = req.body;
-    const news = {
-        id: newsFeed.length + 1,
-        title,
-        content,
+    // Return only essential public info for other players
+    const publicData = countries.map(({ secret_code, ...rest }) => rest);
+    res.json({ success: true, data: publicData });
+});
+
+// 3. Get Full Arsenal (Global Market)
+app.get('/api/arsenal', (req, res) => {
+    const arsenal = readJsonFile(ARSENAL_FILE);
+    if (!arsenal) {
+        return res.status(500).json({ success: false, message: "فشل في جلب بيانات المستودع." });
+    }
+    res.json({ success: true, data: arsenal });
+});
+
+// 4. Purchase Unit Endpoint
+app.post('/api/purchase', (req, res) => {
+    const { countryId, itemId, quantity } = req.body;
+    const purchaseQuantity = parseInt(quantity, 10) || 1;
+
+    if (!countryId || !itemId || purchaseQuantity < 1) {
+        return res.status(400).json({ success: false, message: "بيانات شراء غير مكتملة." });
+    }
+
+    let countries = readJsonFile(COUNTRIES_FILE);
+    let arsenal = readJsonFile(ARSENAL_FILE);
+    if (!countries || !arsenal) {
+        return res.status(500).json({ success: false, message: "فشل في قراءة بيانات الخادم." });
+    }
+
+    const countryIndex = countries.findIndex(c => c.id === countryId);
+    if (countryIndex === -1) {
+        return res.status(404).json({ success: false, message: "الدولة غير موجودة." });
+    }
+
+    const itemIndex = arsenal.findIndex(i => i.id === itemId);
+    if (itemIndex === -1) {
+        return res.status(404).json({ success: false, message: "السلاح غير موجود في المستودع." });
+    }
+
+    const country = countries[countryIndex];
+    const item = arsenal[itemIndex];
+    const totalCost = item.price_per_unit * purchaseQuantity;
+
+    // Check 1: Budget
+    if (country.budget < totalCost) {
+        return res.status(400).json({
+            success: false,
+            message: `الميزانية غير كافية! تحتاج إلى $${totalCost.toLocaleString()} لكن رصيدك هو $${country.budget.toLocaleString()}.`
+        });
+    }
+
+    // Check 2: Global Stock (Ignore for intelligence missions where stock is -1)
+    if (item.global_stock !== -1 && item.global_stock < purchaseQuantity) {
+        return res.status(400).json({
+            success: false,
+            message: `المخزون العالمي غير كاف! متاح: ${item.global_stock}، طلبك: ${purchaseQuantity}.`
+        });
+    }
+
+    // --- Execute Transaction ---
+    // Deduct budget
+    countries[countryIndex].budget -= totalCost;
+
+    // Update arsenal for the country
+    const existingUnitIndex = countries[countryIndex].arsenal.findIndex(a => a.itemId === itemId);
+    if (existingUnitIndex !== -1) {
+        countries[countryIndex].arsenal[existingUnitIndex].quantity += purchaseQuantity;
+    } else {
+        countries[countryIndex].arsenal.push({
+            itemId: itemId,
+            name: item.name,
+            name_ar: item.name_ar,
+            icon: item.icon,
+            quantity: purchaseQuantity
+        });
+    }
+
+    // Update global stock if applicable
+    if (item.global_stock !== -1) {
+        arsenal[itemIndex].global_stock -= purchaseQuantity;
+    }
+
+    // Save updated data
+    if (!writeJsonFile(COUNTRIES_FILE, countries) || !writeJsonFile(ARSENAL_FILE, arsenal)) {
+        return res.status(500).json({ success: false, message: "فشل في حفظ المعاملة. حاول مرة أخرى." });
+    }
+
+    // Broadcast purchase to chat log
+    const chatLog = readJsonFile(CHAT_FILE) || [];
+    const transactionMessage = {
         timestamp: new Date().toISOString(),
-        pinned: pinned || false,
-        author: req.nation,
-        category: 'announcement'
+        sender: country.name,
+        senderId: country.id,
+        type: "military_transaction",
+        css_class: country.css_class,
+        message: `[بلاغ فيدرالي] قامت ${country.name} بإنفاق $${totalCost.toLocaleString()} لشراء ${purchaseQuantity} ${item.name_ar} (${item.name}).`
     };
-    
-    newsFeed.unshift(news);
-    res.json({ success: true, news });
-});
+    chatLog.push(transactionMessage);
+    // Keep only last 200 messages
+    while (chatLog.length > 200) {
+        chatLog.shift();
+    }
+    writeJsonFile(CHAT_FILE, chatLog);
 
-app.delete('/api/news/:id', authenticateSession, (req, res) => {
-    if (req.role !== 'president') {
-        return res.status(403).json({ error: 'غير مصرح' });
-    }
-    
-    newsFeed = newsFeed.filter(n => n.id !== parseInt(req.params.id));
-    res.json({ success: true });
-});
-
-// ============ نظام الشات الدبلوماسي ============
-app.get('/api/chat', authenticateSession, (req, res) => {
-    res.json(chatMessages);
-});
-
-app.post('/api/chat', authenticateSession, (req, res) => {
-    const { message } = req.body;
-    
-    if (!message || message.trim() === '') {
-        return res.status(400).json({ error: 'الرسالة فارغة' });
-    }
-    
-    const chatMsg = {
-        id: chatMessages.length + 1,
-        nation: req.nation,
-        sender: req.representative,
-        message: message,
-        timestamp: new Date().toISOString(),
-        type: 'diplomatic'
-    };
-    
-    chatMessages.push(chatMsg);
-    res.json({ success: true, message: chatMsg });
-});
-
-// ============ نظام المتجر العسكري ============
-app.get('/api/store', authenticateSession, (req, res) => {
-    res.json({
-        weapons: weaponsStore,
-        budget: nationsDB[req.nation].budget,
-        treasury: nationsDB[req.nation].treasury
-    });
-});
-
-app.post('/api/store/purchase', authenticateSession, (req, res) => {
-    const { weaponId, quantity } = req.body;
-    const weapon = weaponsStore.find(w => w.id === weaponId);
-    const nation = nationsDB[req.nation];
-    
-    if (!weapon) {
-        return res.status(404).json({ error: 'السلاح غير موجود' });
-    }
-    
-    if (weapon.stock < quantity) {
-        return res.status(400).json({ error: 'المخزون غير كاف' });
-    }
-    
-    const totalCost = weapon.price * quantity;
-    if (nation.budget < totalCost) {
-        return res.status(400).json({ error: 'الميزانية غير كافية' });
-    }
-    
-    // تحديث المخزون والميزانية
-    weapon.stock -= quantity;
-    nation.budget -= totalCost;
-    nation.treasury -= totalCost * 0.1;
-    
-    // تحديث القوات العسكرية
-    switch(weapon.type) {
-        case 'tank':
-            nation.military.tanks += quantity;
-            break;
-        case 'aircraft':
-            nation.military.aircraft += quantity;
-            break;
-        case 'submarine':
-            nation.military.submarines += quantity;
-            break;
-    }
-    
-    // إرسال إشعار تلقائي للشات
-    const alertMessage = {
-        id: chatMessages.length + 1,
-        nation: 'system',
-        sender: 'النظام الآلي',
-        message: `[برقية عسكرية] قامت ${nation.name} بشراء ${quantity} ${weapon.name} بقيمة ${totalCost}$`,
-        timestamp: new Date().toISOString(),
-        type: 'alert'
-    };
-    chatMessages.push(alertMessage);
-    
-    economicTransactions.push({
-        type: 'purchase',
-        nation: req.nation,
-        weapon: weapon.name,
-        quantity,
-        cost: totalCost,
-        timestamp: new Date().toISOString()
-    });
-    
+    console.log(`TRANSACTION: ${country.name} bought ${purchaseQuantity}x ${item.name} for $${totalCost.toLocaleString()}. New budget: $${countries[countryIndex].budget.toLocaleString()}`);
     res.json({
         success: true,
-        remainingBudget: nation.budget,
-        remainingStock: weapon.stock,
-        militaryUpdate: nation.military
+        message: `تمت الصفقة بنجاح! اشتريت ${purchaseQuantity} ${item.name_ar}.`,
+        newBudget: countries[countryIndex].budget,
+        newArsenal: countries[countryIndex].arsenal
     });
 });
 
-// ============ نظام الاقتصاد المتقدم ============
-app.get('/api/economy', authenticateSession, (req, res) => {
-    const nation = nationsDB[req.nation];
-    res.json({
-        budget: nation.budget,
-        treasury: nation.treasury,
-        resources: nation.resources,
-        transactions: economicTransactions.filter(t => t.nation === req.nation)
-    });
-});
+// 5. Espionage Endpoint
+app.post('/api/espionage', (req, res) => {
+    const { spyCountryId, targetCountryId } = req.body;
 
-app.post('/api/economy/trade', authenticateSession, (req, res) => {
-    const { targetNation, resource, amount, price } = req.body;
-    
-    if (!nationsDB[targetNation]) {
-        return res.status(404).json({ error: 'الدولة المستهدفة غير موجودة' });
+    if (!spyCountryId || !targetCountryId) {
+        return res.status(400).json({ success: false, message: "بيانات المهمة غير مكتملة." });
     }
-    
-    const seller = nationsDB[req.nation];
-    const buyer = nationsDB[targetNation];
-    
-    if (!seller.resources[resource] || seller.resources[resource] < amount) {
-        return res.status(400).json({ error: 'الموارد غير كافية' });
+    if (spyCountryId === targetCountryId) {
+        return res.status(400).json({ success: false, message: "لا يمكنك التجسس على نفسك، أيها القائد." });
     }
-    
-    if (buyer.budget < price) {
-        return res.status(400).json({ error: 'ميزانية المشتري غير كافية' });
-    }
-    
-    // تنفيذ الصفقة
-    seller.resources[resource] -= amount;
-    seller.budget += price;
-    buyer.resources[resource] += amount;
-    buyer.budget -= price;
-    
-    // تحسين العلاقات الدبلوماسية
-    if (diplomaticRelations[req.nation]) {
-        diplomaticRelations[req.nation][targetNation] = Math.min(100, 
-            (diplomaticRelations[req.nation][targetNation] || 50) + 5);
-    }
-    
-    const tradeAlert = {
-        id: chatMessages.length + 1,
-        nation: 'system',
-        sender: 'النظام الاقتصادي',
-        message: `[صفقة تجارية] قامت ${seller.name} ببيع ${amount} ${resource} إلى ${buyer.name} بقيمة ${price}$`,
-        timestamp: new Date().toISOString(),
-        type: 'economic'
-    };
-    chatMessages.push(tradeAlert);
-    
-    res.json({ success: true, sellerResources: seller.resources, buyerResources: buyer.resources });
-});
 
-// ============ نظام إدارة القوات العسكرية ============
-app.get('/api/military', authenticateSession, (req, res) => {
-    const nation = nationsDB[req.nation];
-    res.json({
-        military: nation.military,
-        territories: nation.territories,
-        campaigns: militaryCampaigns.filter(c => 
-            c.attacker === req.nation || c.defender === req.nation
-        )
-    });
-});
+    let countries = readJsonFile(COUNTRIES_FILE);
+    if (!countries) return res.status(500).json({ success: false, message: "فشل في تحميل البيانات." });
 
-app.post('/api/military/deploy', authenticateSession, (req, res) => {
-    const { targetNation, units } = req.body;
-    
-    if (!nationsDB[targetNation]) {
-        return res.status(404).json({ error: 'الدولة المستهدفة غير موجودة' });
-    }
-    
-    const attacker = nationsDB[req.nation];
-    
-    // التحقق من توفر القوات
-    for (let unitType in units) {
-        if (attacker.military[unitType] < units[unitType]) {
-            return res.status(400).json({ error: `قوات ${unitType} غير كافية` });
-        }
-    }
-    
-    // خصم القوات
-    for (let unitType in units) {
-        attacker.military[unitType] -= units[unitType];
-    }
-    
-    const campaign = {
-        id: militaryCampaigns.length + 1,
-        attacker: req.nation,
-        defender: targetNation,
-        units: units,
-        startTime: new Date().toISOString(),
-        status: 'active',
-        battleProgress: 0
-    };
-    
-    militaryCampaigns.push(campaign);
-    
-    const deployAlert = {
-        id: chatMessages.length + 1,
-        nation: 'system',
-        sender: 'القيادة العسكرية',
-        message: `[تعبئة عسكرية] قامت ${attacker.name} بنشر قواتها نحو ${nationsDB[targetNation].name}`,
-        timestamp: new Date().toISOString(),
-        type: 'military'
-    };
-    chatMessages.push(deployAlert);
-    
-    res.json({ success: true, campaign, remainingForces: attacker.military });
-});
+    const spyCountry = countries.find(c => c.id === spyCountryId);
+    const targetCountry = countries.find(c => c.id === targetCountryId);
 
-// ============ نظام العلاقات الدبلوماسية ============
-app.get('/api/diplomacy', authenticateSession, (req, res) => {
-    res.json({
-        relations: diplomaticRelations[req.nation] || {},
-        alliances: [],
-        treaties: []
-    });
-});
-
-app.post('/api/diplomacy/treaty', authenticateSession, (req, res) => {
-    const { targetNation, treatyType } = req.body;
-    
-    if (!nationsDB[targetNation]) {
-        return res.status(404).json({ error: 'الدولة غير موجودة' });
+    if (!spyCountry || !targetCountry) {
+        return res.status(404).json({ success: false, message: "إحدى الدول غير موجودة." });
     }
-    
-    diplomaticRelations[req.nation][targetNation] = Math.min(100, 
-        (diplomaticRelations[req.nation][targetNation] || 50) + 10);
-    
-    const treatyAlert = {
-        id: chatMessages.length + 1,
-        nation: 'system',
-        sender: 'السلك الدبلوماسي',
-        message: `[معاهدة] توقيع معاهدة ${treatyType} بين ${nationsDB[req.nation].name} و ${nationsDB[targetNation].name}`,
-        timestamp: new Date().toISOString(),
-        type: 'diplomatic'
-    };
-    chatMessages.push(treatyAlert);
-    
-    res.json({ success: true, relations: diplomaticRelations[req.nation] });
-});
 
-// ============ نظام إحصائيات اللعبة ============
-app.get('/api/statistics', authenticateSession, (req, res) => {
-    const stats = {};
-    for (let nation in nationsDB) {
-        stats[nation] = {
-            name: nationsDB[nation].name,
-            budget: nationsDB[nation].budget,
-            militaryStrength: Object.values(nationsDB[nation].military).reduce((a, b) => a + b, 0),
-            territories: nationsDB[nation].territories,
-            resources: nationsDB[nation].resources
+    const missionCost = 35000;
+    if (spyCountry.budget < missionCost) {
+        return res.status(400).json({ success: false, message: `فشل تمويل المهمة. أنت بحاجة إلى $${missionCost.toLocaleString()}.` });
+    }
+
+    // Execute Mission
+    const spyIndex = countries.findIndex(c => c.id === spyCountryId);
+    countries[spyIndex].budget -= missionCost;
+    writeJsonFile(COUNTRIES_FILE, countries);
+
+    // Simulate a 20% failure chance
+    const missionSuccess = Math.random() > 0.2;
+
+    if (missionSuccess) {
+        // Calculate total army size
+        let totalUnits = 0;
+        targetCountry.arsenal.forEach(unit => totalUnits += unit.quantity);
+
+        const intelMessage = {
+            timestamp: new Date().toISOString(),
+            sender: "جهاز المخابرات المركزية",
+            senderId: "intel_service",
+            type: "intel_success",
+            message: `[مهمة سرية ناجحة] تم اختراق خزينة ${targetCountry.name}. الميزانية الحالية: $${targetCountry.budget.toLocaleString()}. حجم القوات: ${totalUnits} قطعة.`
         };
+
+        // Log to chat
+        const chatLog = readJsonFile(CHAT_FILE) || [];
+        const publicLeakMessage = {
+            timestamp: new Date().toISOString(),
+            sender: "مصدر استخباراتي مجهول",
+            senderId: "anonymous_leak",
+            type: "info_leak",
+            message: `[تسريب إخباري] تقارير غير مؤكدة تشير إلى اختراق أمني استهدف البيانات المالية لـ ${targetCountry.name}.`
+        };
+        chatLog.push(publicLeakMessage);
+        chatLog.push(intelMessage);
+        while (chatLog.length > 200) chatLog.shift();
+        writeJsonFile(CHAT_FILE, chatLog);
+
+        return res.json({
+            success: true,
+            intel: {
+                targetName: targetCountry.name,
+                targetBudget: targetCountry.budget,
+                targetArsenal: targetCountry.arsenal,
+                totalUnits: totalUnits
+            },
+            message: "نجحت المهمة! تم الحصول على المعلومات."
+        });
+    } else {
+        // Mission failed
+        const failMessage = {
+            timestamp: new Date().toISOString(),
+            sender: "جهاز المخابرات المركزية",
+            senderId: "intel_service",
+            type: "intel_failure",
+            message: `[فشل المهمة] تم كشف عملائنا وفقدان الاتصال بهم قبل اختراق دفاعات ${targetCountry.name}.`
+        };
+        const chatLog = readJsonFile(CHAT_FILE) || [];
+        chatLog.push(failMessage);
+        while (chatLog.length > 200) chatLog.shift();
+        writeJsonFile(CHAT_FILE, chatLog);
+
+        return res.json({
+            success: false,
+            message: "فشلت المهمة. تم القبض على العملاء أو قتلهم. لم يتم الحصول على أي معلومات."
+        });
     }
-    res.json(stats);
 });
 
+// 6. Chat Endpoints
+app.get('/api/chat', (req, res) => {
+    const chatLog = readJsonFile(CHAT_FILE) || [];
+    // Return last 100 messages for performance
+    const recentChat = chatLog.slice(-100);
+    res.json({ success: true, data: recentChat });
+});
+
+app.post('/api/chat', (req, res) => {
+    const { countryId, countryName, message, cssClass } = req.body;
+
+    if (!countryId || !countryName || !message || message.trim() === '') {
+        return res.status(400).json({ success: false, message: "بيانات الرسالة غير مكتملة." });
+    }
+
+    const chatLog = readJsonFile(CHAT_FILE) || [];
+    const newMessage = {
+        timestamp: new Date().toISOString(),
+        sender: countryName,
+        senderId: countryId,
+        type: "diplomatic",
+        css_class: cssClass || "",
+        message: message.trim()
+    };
+    chatLog.push(newMessage);
+    // Keep only last 200 messages
+    while (chatLog.length > 200) chatLog.shift();
+    if (writeJsonFile(CHAT_FILE, chatLog)) {
+        res.json({ success: true, data: newMessage });
+    } else {
+        res.status(500).json({ success: false, message: "فشل في إرسال البرقية." });
+    }
+});
+
+// 7. Update Country Data (for front-end polling)
+app.post('/api/country/update', (req, res) => {
+    const { countryId } = req.body;
+    const countries = readJsonFile(COUNTRIES_FILE);
+    if (!countries) return res.status(500).json({ success: false, message: "خطأ في السيرفر." });
+
+    const country = countries.find(c => c.id === countryId);
+    if (!country) return res.status(404).json({ success: false, message: "دولة غير موجودة." });
+
+    res.json({
+        success: true,
+        budget: country.budget,
+        arsenal: country.arsenal
+    });
+});
+
+// --- Start Server ---
 app.listen(PORT, () => {
-    console.log(`الخادم العسكري يعمل على المنفذ ${PORT}`);
+    console.log(`\n--- SOVEREIGN 1926 CENTRAL COMMAND ---`);
+    console.log(`Server Operational on Port: ${PORT}`);
+    console.log(`Encryption: ACTIVE`);
+    console.log(`---------------------------------------\n`);
+    initializeGameData();
 });
