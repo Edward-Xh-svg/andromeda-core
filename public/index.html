@@ -3,90 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>المنصة المركزية - 1926</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>القوى العظمى - 1926</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="hud-layer"><div class="scanlines"></div></div>
-
-    <header class="fed-top-bar">
-        <div class="bar-right">
-            <button id="mobile-menu-toggle" class="mobile-burger-btn"><i class="fa-solid fa-bars"></i></button>
-            <span class="seal-text"><i class="fa-solid fa-building-columns text-red"></i> شبكة السيادة 1926</span>
-        </div>
-        <div class="bar-center hide-mobile">
-            <div class="crypto-clock"><i class="fa-solid fa-tower-broadcast text-green"></i> اتصال مشفر آمن</div>
-        </div>
-        <div class="bar-left">
-            <button id="top-login-btn" class="session-badge" style="cursor:pointer; background-color: var(--intel-red);">تسجيل الدخول للنظام</button>
-        </div>
-    </header>
-
-    <div class="main-system-container">
-        
-        <aside id="fed-sidebar-id" class="fed-sidebar">
-            <div class="presidential-seal-container">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Seal_of_the_President_of_the_United_States_%20%281916%E2%80%931945%29.svg/512px-Seal_of_the_President_of_the_United_States_%20%281916%E2%80%931945%29.svg.png" alt="Seal">
-                <h4>السيرفر المركزي</h4>
+    <!-- شاشة تسجيل الدخول -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="military-insignia">
+                    <div class="insignia-star"></div>
+                </div>
+                <h1 class="login-title">القيادة العسكرية العليا</h1>
+                <p class="login-subtitle">النظام الدبلوماسي المشفر - 1926</p>
             </div>
             
-            <nav class="fed-nav">
-                <a href="#" class="nav-btn active" data-sec="news"><i class="fa-solid fa-radio"></i> مركز الأخبار العام</a>
-                <a href="#" class="nav-btn secure-zone" data-sec="consulates"><i class="fa-solid fa-comments"></i> البرقيات والمراسلات الدبلوماسية</a>
-                <a href="#" class="nav-btn secure-zone" data-sec="arsenal-market"><i class="fa-solid fa-cart-shopping"></i> مستودعات السلاح للبيع الدولي</a>
-            </nav>
-        </aside>
-
-        <div id="sidebar-overlay-id" class="sidebar-mobile-overlay hidden"></div>
-
-        <div id="login-modal" class="overlay-gate hidden">
-            <div class="gate-box">
-                <div class="lock-icon-pulse"><i class="fa-solid fa-id-card-clip"></i></div>
-                <h3 id="gate-title">تسجيل الدخول الفيدرالي</h3>
-                <p class="text-muted" style="margin-bottom:15px;">يرجى إدخال الحساب الخاص بدولتك للعبور للسيرفر.</p>
-                <input type="email" id="login-email" placeholder="البريد الإلكتروني (مثال: eric@malines.nc)">
-                <input type="password" id="login-pass" placeholder="كلمة السر الخاصة بك">
-                <div id="login-error" class="error-msg"><i class="fa-solid fa-ban"></i> البيانات خاطئة! تأكد من الإيميل وكلمة السر.</div>
-                <div class="gate-actions" style="margin-top:15px;">
-                    <button id="login-close" class="btn-cancel">إلغاء</button>
-                    <button id="login-confirm" class="btn-submit">دخول السيرفر</button>
+            <div class="login-form">
+                <div class="input-group">
+                    <label class="input-label">اختيار الدولة</label>
+                    <select id="nationSelect" class="military-select">
+                        <option value="">-- اختر دولتك --</option>
+                        <option value="usa">الولايات المتحدة الأمريكية</option>
+                        <option value="malines">دولة مالينس</option>
+                        <option value="soviet">الاتحاد السوفيتي</option>
+                        <option value="china">الإمبراطورية الصينية</option>
+                    </select>
                 </div>
+                
+                <div class="input-group">
+                    <label class="input-label">الممثل الدبلوماسي</label>
+                    <input type="text" id="representativeInput" class="military-input" 
+                           placeholder="أدخل اسم الممثل الدبلوماسي">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">الرمز السري (7 أرقام)</label>
+                    <input type="password" id="codeInput" class="military-input" 
+                           placeholder="أدخل الرمز السري" maxlength="7" pattern="[0-9]{7}">
+                </div>
+                
+                <button id="loginButton" class="military-button">
+                    <span>دخول النظام المشفر</span>
+                    <div class="button-decoration"></div>
+                </button>
+                
+                <div id="loginError" class="error-message"></div>
             </div>
         </div>
-
-        <main class="fed-display-panel">
-            <section id="news-sec" class="sys-section">
-                <div class="hero-banner"><h2>الأرشيف الفيدرالي العام</h2></div>
-                <div id="admin-editor-panel" class="editor-box hidden">
-                    <h4><i class="fa-solid fa-file-shield"></i> نشر قرار رئاسي</h4>
-                    <div class="editor-inputs">
-                        <input type="text" id="post-title" placeholder="عنوان القرار">
-                        <textarea id="post-content" placeholder="نص القرار..."></textarea>
-                        <button id="submit-post-btn" class="btn-submit w-full">تثبيت ونشر</button>
-                    </div>
-                </div>
-                <div id="news-feed-container" class="feed-grid"></div>
-            </section>
-
-            <section id="consulates-sec" class="sys-section hidden">
-                <div class="classified-title"><h2><i class="fa-solid fa-handshake"></i> المراسلات الدبلوماسية المباشرة</h2></div>
-                <div class="diplomatic-chat-card">
-                    <div id="consulate-chat-messages" class="chat-display-area"></div>
-                    <div class="chat-input-controls">
-                        <textarea id="chat-text-input" placeholder="اكتب برقية مشفرة للسيرفر المشترك..."></textarea>
-                        <button id="send-chat-btn" class="btn-submit w-full">إرسال البرقية فوراً</button>
-                    </div>
-                </div>
-            </section>
-
-            <section id="arsenal-market-sec" class="sys-section hidden">
-                <div class="classified-title"><h2><i class="fa-solid fa-cart-shopping"></i> مستودعات مبيعات السلاح الدولي</h2></div>
-                <div id="market-products-grid" class="market-grid-layout"></div>
-            </section>
-        </main>
     </div>
+
+    <!-- التطبيق الرئيسي -->
+    <div id="appContainer" class="app-container" style="display: none;">
+        <!-- شريط الحالة العلوي -->
+        <header class="status-bar">
+            <div class="status-info">
+                <span class="nation-name" id="nationNameDisplay">---</span>
+                <span class="time-display" id="timeDisplay">1926</span>
+            </div>
+            <div class="status-indicators">
+                <div class="budget-indicator">
+                    <span class="budget-label">الميزانية:</span>
+                    <span class="budget-value" id="budgetDisplay">0</span>
+                </div>
+                <div class="signal-strength">
+                    <div class="signal-bar"></div>
+                    <div class="signal-bar"></div>
+                    <div class="signal-bar"></div>
+                    <div class="signal-bar"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="main-content" id="mainContent">
+            <!-- سيتم تحميل المحتوى ديناميكياً -->
+        </main>
+
+        <!-- شريط التنقل السفلي -->
+        <nav class="bottom-nav">
+            <button class="nav-button active" data-screen="news">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                    </svg>
+                </div>
+                <span class="nav-label">الأرشيف</span>
+            </button>
+            
+            <button class="nav-button" data-screen="chat">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                </div>
+                <span class="nav-label">المراسلات</span>
+            </button>
+            
+            <button class="nav-button" data-screen="military">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-.8-1H5v4H3z"/>
+                    </svg>
+                </div>
+                <span class="nav-label">التسلح</span>
+            </button>
+            
+            <button class="nav-button" data-screen="economy">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <span class="nav-label">الاقتصاد</span>
+            </button>
+            
+            <button class="nav-button" data-screen="diplomacy">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </div>
+                <span class="nav-label">الدبلوماسية</span>
+            </button>
+        </nav>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
