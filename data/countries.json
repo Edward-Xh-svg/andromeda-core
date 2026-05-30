@@ -1,0 +1,112 @@
+[
+  {
+    "id": "usa",
+    "name": "United States of America",
+    "name_ar": "الولايات المتحدة الأمريكية",
+    "role": "superpower_admin",
+    "role_ar": "الرئاسة / الأدمن",
+    "secret_code": "1010101",
+    "budget": 65000000,
+    "arsenal": [],
+    "css_class": "presidential"
+  },
+  {
+    "id": "ussr",
+    "name": "Soviet Union",
+    "name_ar": "الاتحاد السوفيتي",
+    "role": "superpower",
+    "role_ar": "قوى عظمى",
+    "secret_code": null,
+    "budget": 35000000,
+    "arsenal": [],
+    "css_class": "superpower"
+  },
+  {
+    "id": "china",
+    "name": "Republic of China",
+    "name_ar": "جمهورية الصين",
+    "role": "superpower",
+    "role_ar": "قوى عظمى",
+    "secret_code": null,
+    "budget": 35000000,
+    "arsenal": [],
+    "css_class": "superpower"
+  },
+  {
+    "id": "uk",
+    "name": "United Kingdom",
+    "name_ar": "المملكة المتحدة",
+    "role": "superpower",
+    "role_ar": "قوى عظمى",
+    "secret_code": null,
+    "budget": 35000000,
+    "arsenal": [],
+    "css_class": "superpower"
+  },
+  {
+    "id": "france",
+    "name": "French Republic",
+    "name_ar": "الجمهورية الفرنسية",
+    "role": "superpower",
+    "role_ar": "قوى عظمى",
+    "secret_code": null,
+    "budget": 35000000,
+    "arsenal": [],
+    "css_class": "superpower"
+  },
+  {
+    "id": "malines",
+    "name": "Republic of Malines",
+    "name_ar": "دولة مالينس الافتراضية",
+    "role": "medium_power",
+    "role_ar": "دول متوسطة وناشئة",
+    "secret_code": null,
+    "budget": 12000000,
+    "arsenal": [],
+    "css_class": "medium-power"
+  },
+  {
+    "id": "italy",
+    "name": "Kingdom of Italy",
+    "name_ar": "مملكة إيطاليا",
+    "role": "medium_power",
+    "role_ar": "دول متوسطة وناشئة",
+    "secret_code": null,
+    "budget": 12000000,
+    "arsenal": [],
+    "css_class": "medium-power"
+  },
+  {
+    "id": "japan",
+    "name": "Empire of Japan",
+    "name_ar": "إمبراطورية اليابان",
+    "role": "medium_power",
+    "role_ar": "دول متوسطة وناشئة",
+    "secret_code": null,
+    "budget": 12000000,
+    "arsenal": [],
+    "css_class": "medium-power"
+  },
+  {
+    "id": "brazil",
+    "name": "Republic of Brazil",
+    "name_ar": "جمهورية البرازيل",
+    "role": "small_nation",
+    "role_ar": "دول صغيرة ونامية",
+    "secret_code": null,
+    "budget": 2500000,
+    "arsenal": [],
+    "css_class": "small-nation"
+  },
+  {
+    "id": "persia",
+    "name": "Imperial State of Persia",
+    "name_ar": "الدولة الفارسية الإمبراطورية",
+    "role": "small_nation",
+    "role_ar": "دول صغيرة ونامية",
+    "secret_code": null,
+    "budget": 2500000,
+    "arsenal": [],
+    "css_class": "small-nation"
+  }
+]
