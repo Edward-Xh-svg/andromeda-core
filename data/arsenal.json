@@ -1,0 +1,50 @@
+[
+  {
+    "id": "m1922_thunder",
+    "name": "M1922 Thunder",
+    "name_ar": "رعد M1922",
+    "type": "armored",
+    "type_ar": "دبابة متوسطة ثقيلة",
+    "description": "A heavy medium tank equipped with a 57mm cannon. The backbone of any modern army.",
+    "description_ar": "دبابة متوسطة ثقيلة - مدفع 57 ملم. العمود الفقري لأي جيش حديث.",
+    "price_per_unit": 18500,
+    "global_stock": 500,
+    "icon": "tank-icon"
+  },
+  {
+    "id": "m1922_iron_eagle",
+    "name": "M1922 Iron Eagle",
+    "name_ar": "النسر الحديدي M1922",
+    "type": "airforce",
+    "type_ar": "طائرة مقاتلة ثنائية الأجنحة",
+    "description": "A biplane fighter built for air superiority and reconnaissance.",
+    "description_ar": "طائرة مقاتلة ثنائية الأجنحة - تفوق جوي واستطلاع.",
+    "price_per_unit": 12000,
+    "global_stock": 800,
+    "icon": "plane-icon"
+  },
+  {
+    "id": "m1922_silent_death",
+    "name": "M1922 Silent Death",
+    "name_ar": "الموت الصامت M1922",
+    "type": "naval",
+    "type_ar": "غواصة أسطول استراتيجية",
+    "description": "A long-range strategic fleet submarine. A colossal and expensive piece of naval engineering.",
+    "description_ar": "غواصة أسطول استراتيجية بعيدة المدى. قطعة بحرية هندسية هائلة وباهظة.",
+    "price_per_unit": 1450000,
+    "global_stock": 30,
+    "icon": "sub-icon"
+  },
+  {
+    "id": "intel_mission",
+    "name": "Espionage Mission",
+    "name_ar": "مهمة استخباراتية",
+    "type": "intelligence",
+    "type_ar": "تجسس",
+    "description": "Fund a covert operation to infiltrate a target nation's treasury and reveal their military assets.",
+    "description_ar": "تمويل عملية سرية لاختراق خزينة دولة مستهدفة وكشف أصولها العسكرية.",
+    "price_per_unit": 35000,
+    "global_stock": -1,
+    "icon": "spy-icon"
+  }
+]
