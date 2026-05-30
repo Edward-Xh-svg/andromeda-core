@@ -2,132 +2,169 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>القوى العظمى - 1926</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SOVEREIGN 1926 | القيادة المركزية</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- شاشة تسجيل الدخول -->
-    <div id="loginOverlay" class="login-overlay">
-        <div class="login-container">
-            <div class="login-header">
-                <div class="military-insignia">
-                    <div class="insignia-star"></div>
+    <!-- SCANLINES OVERLAY -->
+    <div class="scanlines"></div>
+
+    <!-- MAIN GAME CONTAINER (Mobile Exclusive) -->
+    <div id="game-container">
+        
+        <!-- ==================== LOGIN GATE ==================== -->
+        <div id="screen-login" class="screen active">
+            <div class="login-wrapper">
+                <div class="login-header">
+                    <div class="logo-type">SOVEREIGN</div>
+                    <div class="logo-year">1926</div>
+                    <div class="subtitle">القيادة المركزية - نظام الاتصالات المشفرة</div>
                 </div>
-                <h1 class="login-title">القيادة العسكرية العليا</h1>
-                <p class="login-subtitle">النظام الدبلوماسي المشفر - 1926</p>
+                <div class="login-form">
+                    <div class="input-group">
+                        <label for="country-select" class="input-label">[ اختر دولتك ]</label>
+                        <select id="country-select" class="tactical-input">
+                            <option value="" disabled selected>-- اختر الدولة --</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="secret-code" class="input-label">[ الرمز السري (7 أرقام) ]</label>
+                        <input type="password" id="secret-code" class="tactical-input" maxlength="7" placeholder="• • • • • • •" inputmode="numeric" pattern="[0-9]*">
+                    </div>
+                    <button id="login-btn" class="tactical-btn primary">
+                        <span class="btn-text">تسجيل الدخول إلى القيادة</span>
+                        <span class="btn-icon">[>>]</span>
+                    </button>
+                    <div id="login-error" class="error-message"></div>
+                </div>
+                <div class="login-footer">
+                    <span class="status-dot active"></span> قناة مشفرة | SSL 256-BIT
+                </div>
             </div>
-            
-            <div class="login-form">
-                <div class="input-group">
-                    <label class="input-label">اختيار الدولة</label>
-                    <select id="nationSelect" class="military-select">
-                        <option value="">-- اختر دولتك --</option>
-                        <option value="usa">الولايات المتحدة الأمريكية</option>
-                        <option value="malines">دولة مالينس</option>
-                        <option value="soviet">الاتحاد السوفيتي</option>
-                        <option value="china">الإمبراطورية الصينية</option>
-                    </select>
+        </div>
+
+        <!-- ==================== MAIN INTERFACE (Post-Login) ==================== -->
+        <div id="screen-main" class="screen">
+            <!-- TOP HUD BAR -->
+            <div id="top-bar">
+                <div class="hud-item">
+                    <span class="hud-label">الدولة</span>
+                    <span id="hud-nation" class="hud-value"></span>
                 </div>
-                
-                <div class="input-group">
-                    <label class="input-label">الممثل الدبلوماسي</label>
-                    <input type="text" id="representativeInput" class="military-input" 
-                           placeholder="أدخل اسم الممثل الدبلوماسي">
+                <div class="hud-item budget-item">
+                    <span class="hud-label">الميزانية</span>
+                    <span id="hud-budget" class="hud-value">$0</span>
                 </div>
-                
-                <div class="input-group">
-                    <label class="input-label">الرمز السري (7 أرقام)</label>
-                    <input type="password" id="codeInput" class="military-input" 
-                           placeholder="أدخل الرمز السري" maxlength="7" pattern="[0-9]{7}">
+                <div class="hud-item">
+                    <span class="hud-label">الوضع</span>
+                    <span id="hud-status" class="hud-value status-secure">آمن</span>
                 </div>
+            </div>
+
+            <!-- SCREENS CONTAINER -->
+            <div id="screens-container">
                 
-                <button id="loginButton" class="military-button">
-                    <span>دخول النظام المشفر</span>
-                    <div class="button-decoration"></div>
+                <!-- 1. MARKET SCREEN (المستودع الفيدرالي) -->
+                <div id="screen-market" class="sub-screen active">
+                    <h2 class="screen-title">[ المستودع الفيدرالي للأسلحة ]</h2>
+                    <div id="market-list" class="list-container"></div>
+                </div>
+
+                <!-- 2. ARMY SCREEN (قواتي) -->
+                <div id="screen-army" class="sub-screen">
+                    <h2 class="screen-title">[ قواتي وترسانتي ]</h2>
+                    <div id="army-list" class="list-container">
+                        <p class="empty-state">لم تقم بشراء أي وحدات بعد. توجه إلى المستودع الفيدرالي للتسليح.</p>
+                    </div>
+                </div>
+
+                <!-- 3. ESPIONAGE SCREEN (الاستخبارات) -->
+                <div id="screen-espionage" class="sub-screen">
+                    <h2 class="screen-title">[ إدارة الاستخبارات والمهام السرية ]</h2>
+                    <div class="espionage-panel">
+                        <p class="panel-description">تمويل مهمة استخباراتية بتكلفة <span class="cost-highlight">$35,000</span> لاختراق دولة مستهدفة وكشف ميزانيتها وحجم قواتها.</p>
+                        <div class="input-group">
+                            <label for="target-select" class="input-label">[ اختر الدولة المستهدفة ]</label>
+                            <select id="target-select" class="tactical-input">
+                                <option value="" disabled selected>-- اختر الهدف --</option>
+                            </select>
+                        </div>
+                        <button id="espionage-btn" class="tactical-btn alert">
+                            <span class="btn-text">بدء المهمة السرية</span>
+                            <span class="btn-icon">[!]</span>
+                        </button>
+                        <div id="intel-result" class="intel-report"></div>
+                    </div>
+                </div>
+
+                <!-- 4. DIPLOMATIC CHAMBER (الغرفة الدبلوماسية) -->
+                <div id="screen-chat" class="sub-screen">
+                    <h2 class="screen-title">[ الغرفة الدبلوماسية - البرقيات المشفرة ]</h2>
+                    <div id="chat-log" class="chat-log-container"></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" class="tactical-input" placeholder="اكتب برقيتك هنا..." maxlength="200">
+                        <button id="send-chat-btn" class="tactical-btn primary small">
+                            <span class="btn-text">إرسال</span>
+                            <span class="btn-icon">[>]</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 5. SETTINGS & LOGOUT -->
+                <div id="screen-settings" class="sub-screen">
+                    <h2 class="screen-title">[ إعدادات القيادة ]</h2>
+                    <div class="settings-panel">
+                        <div class="setting-item">
+                            <span class="setting-label">معرف الدولة</span>
+                            <span id="setting-id" class="setting-value">---</span>
+                        </div>
+                        <div class="setting-item">
+                            <span class="setting-label">الترميز</span>
+                            <span class="setting-value">AES-256-GCM</span>
+                        </div>
+                        <button id="logout-btn" class="tactical-btn danger">
+                            <span class="btn-text">إنهاء الجلسة ومغادرة القيادة</span>
+                            <span class="btn-icon">[X]</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTTOM NAVIGATION BAR -->
+            <nav id="bottom-nav">
+                <button class="nav-btn active" data-screen="screen-market">
+                    <span class="nav-icon">[M]</span>
+                    <span class="nav-label">المستودع</span>
                 </button>
-                
-                <div id="loginError" class="error-message"></div>
-            </div>
+                <button class="nav-btn" data-screen="screen-army">
+                    <span class="nav-icon">[A]</span>
+                    <span class="nav-label">قواتي</span>
+                </button>
+                <button class="nav-btn" data-screen="screen-espionage">
+                    <span class="nav-icon">[E]</span>
+                    <span class="nav-label">الاستخبارات</span>
+                </button>
+                <button class="nav-btn" data-screen="screen-chat">
+                    <span class="nav-icon">[D]</span>
+                    <span class="nav-label">الغرفة الدبلوماسية</span>
+                </button>
+                <button class="nav-btn" data-screen="screen-settings">
+                    <span class="nav-icon">[S]</span>
+                    <span class="nav-label">الإعدادات</span>
+                </button>
+            </nav>
         </div>
     </div>
 
-    <!-- التطبيق الرئيسي -->
-    <div id="appContainer" class="app-container" style="display: none;">
-        <!-- شريط الحالة العلوي -->
-        <header class="status-bar">
-            <div class="status-info">
-                <span class="nation-name" id="nationNameDisplay">---</span>
-                <span class="time-display" id="timeDisplay">1926</span>
-            </div>
-            <div class="status-indicators">
-                <div class="budget-indicator">
-                    <span class="budget-label">الميزانية:</span>
-                    <span class="budget-value" id="budgetDisplay">0</span>
-                </div>
-                <div class="signal-strength">
-                    <div class="signal-bar"></div>
-                    <div class="signal-bar"></div>
-                    <div class="signal-bar"></div>
-                    <div class="signal-bar"></div>
-                </div>
-            </div>
-        </header>
+    <!-- AUDIO PLACEHOLDERS (Hidden) -->
+    <audio id="audio-click" preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="></audio>
+    <audio id="audio-error" preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="></audio>
+    <audio id="audio-success" preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="></audio>
 
-        <!-- المحتوى الرئيسي -->
-        <main class="main-content" id="mainContent">
-            <!-- سيتم تحميل المحتوى ديناميكياً -->
-        </main>
-
-        <!-- شريط التنقل السفلي -->
-        <nav class="bottom-nav">
-            <button class="nav-button active" data-screen="news">
-                <div class="nav-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
-                    </svg>
-                </div>
-                <span class="nav-label">الأرشيف</span>
-            </button>
-            
-            <button class="nav-button" data-screen="chat">
-                <div class="nav-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                    </svg>
-                </div>
-                <span class="nav-label">المراسلات</span>
-            </button>
-            
-            <button class="nav-button" data-screen="military">
-                <div class="nav-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-.8-1H5v4H3z"/>
-                    </svg>
-                </div>
-                <span class="nav-label">التسلح</span>
-            </button>
-            
-            <button class="nav-button" data-screen="economy">
-                <div class="nav-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-                <span class="nav-label">الاقتصاد</span>
-            </button>
-            
-            <button class="nav-button" data-screen="diplomacy">
-                <div class="nav-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    </svg>
-                </div>
-                <span class="nav-label">الدبلوماسية</span>
-            </button>
-        </nav>
-    </div>
-
-    <script src="script.js"></script>
+    <!-- SCRIPTS -->
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
 </body>
 </html>
