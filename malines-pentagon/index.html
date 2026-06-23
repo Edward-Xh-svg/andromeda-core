@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ MALINES PENTAGON</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">🏛️ MALINES PENTAGON</div>
+        <nav>
+            <a href="#" id="homeLink">الرئيسية</a>
+            <a href="#" id="profileLink">الملف الشخصي</a>
+            <a href="#" id="messagesLink">الرسائل</a>
+            <a href="#" id="logoutLink">تسجيل الخروج</a>
+        </nav>
+        <div id="userInfo"></div>
+    </header>
+
+    <main>
+        <section id="postsSection">
+            <div class="new-post">
+                <textarea id="postContent" placeholder="اكتب منشورك هنا..."></textarea>
+                <input type="file" id="postImage" accept="image/*">
+                <button id="submitPost">نشر</button>
+            </div>
+            <div id="postsFeed"></div>
+        </section>
+
+        <aside id="sidebar">
+            <h3>📊 إحصائيات</h3>
+            <p id="statsUsers">الأعضاء: 0</p>
+            <p id="statsPosts">المنشورات: 0</p>
+            <p id="statsComments">التعليقات: 0</p>
+        </aside>
+    </main>
+
+    <footer>
+        <p>© 1950 — جميع الحقوق محفوظة لوزارة الدفاع الأمريكية</p>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/posts.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
