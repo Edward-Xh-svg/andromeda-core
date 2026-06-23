@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>الرسائل — MALINES PENTAGON</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+    <header>
+        <div class="logo">MALINES PENTAGON</div>
+        <nav>
+            <a href="index.html">الرئيسية</a>
+            <a href="profile.html">الملف الشخصي</a>
+            <a href="messages.html">الرسائل</a>
+            <a href="#" id="logoutLink">تسجيل الخروج</a>
+        </nav>
+        <div id="userInfo"></div>
+    </header>
+
+    <main>
+        <div class="messages-container">
+            <div class="messages-list">
+                <h3>المحادثات</h3>
+                <div id="conversationsList"></div>
+            </div>
+            <div class="messages-view">
+                <h3>الرسائل</h3>
+                <div id="messagesDisplay"></div>
+                <div class="message-input">
+                    <input type="text" id="messageContent" placeholder="اكتب رسالتك..." />
+                    <button id="sendMessage">إرسال</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>جميع الحقوق محفوظة</p>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/messages.js"></script>
+</body>
+</html>
