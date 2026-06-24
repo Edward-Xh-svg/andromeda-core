@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server/server.js"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "/server/server.js"
+    },
+    {
+      "src": "/(.*\\.(css|js|html|png|jpg|gif|webp|ico|svg|woff|woff2|ttf))",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/server/server.js"
+    }
+  ],
+  "env": {
+    "JWT_SECRET": "@mp_jwt_secret",
+    "NODE_ENV": "production"
+  }
+}
